@@ -15,3 +15,10 @@ To avoid folks needing to mentally map between the interoperability PEP numbers 
 So, for example, the PEP 440 versioning specification is:
 
     pep-0440-versioning.rst
+
+Other directories
+-----------------
+
+`unpublished`: draft documents that have yet to receive a PEP number
+`schemas`: jsonschema files
+
