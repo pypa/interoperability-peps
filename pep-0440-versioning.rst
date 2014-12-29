@@ -820,8 +820,7 @@ specifier.
 Compatible release
 ------------------
 
-A compatible release clause consists of either a version identifier without
-any comparison operator or else the compatible release operator ``~=``
+A compatible release clause consists of the compatible release operator ``~=``
 and a version identifier. It matches any candidate version that is expected
 to be compatible with the specified version.
 
@@ -839,11 +838,9 @@ This operator MUST NOT be used with a single segment version number such as
 
 For example, the following groups of version clauses are equivalent::
 
-    2.2
     ~= 2.2
     >= 2.2, == 2.*
 
-    1.4.5
     ~= 1.4.5
     >= 1.4.5, == 1.4.*
 
@@ -851,11 +848,9 @@ If a pre-release, post-release or developmental release is named in a
 compatible release clause as ``V.N.suffix``, then the suffix is ignored
 when determining the required prefix match::
 
-    2.2.post3
     ~= 2.2.post3
     >= 2.2.post3, == 2.*
 
-    1.4.5a4
     ~= 1.4.5a4
     >= 1.4.5a4, == 1.4.*
 
@@ -863,11 +858,9 @@ The padding rules for release segment comparisons means that the assumed
 degree of forward compatibility in a compatible release clause can be
 controlled by appending additional zeros to the version specifier::
 
-    2.2.0
     ~= 2.2.0
     >= 2.2.0, == 2.2.*
 
-    1.4.5.0
     ~= 1.4.5.0
     >= 1.4.5.0, == 1.4.5.*
 
@@ -1067,14 +1060,14 @@ specifiers - they are always included unless explicitly excluded.
 Examples
 --------
 
-* ``3.1``: version 3.1 or later, but not version 4.0 or later.
-* ``3.1.2``: version 3.1.2 or later, but not version 3.2.0 or later.
-* ``3.1a1``: version 3.1a1 or later, but not version 4.0 or later.
+* ``~=3.1``: version 3.1 or later, but not version 4.0 or later.
+* ``~=3.1.2``: version 3.1.2 or later, but not version 3.2.0 or later.
+* ``~=3.1a1``: version 3.1a1 or later, but not version 4.0 or later.
 * ``== 3.1``: specifically version 3.1 (or 3.1.0), excludes all pre-releases,
   post releases, developmental releases and any 3.1.x maintenance releases.
 * ``== 3.1.*``: any version that starts with 3.1. Equivalent to the
-  ``3.1.0`` compatible release clause.
-* ``3.1.0, != 3.1.3``: version 3.1.0 or later, but not version 3.1.3 and
+  ``~=3.1.0`` compatible release clause.
+* ``~=3.1.0, != 3.1.3``: version 3.1.0 or later, but not version 3.1.3 and
   not version 3.2.0 or later.
 
 
