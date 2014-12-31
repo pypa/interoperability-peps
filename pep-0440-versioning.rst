@@ -1515,8 +1515,14 @@ the initial reference implementation was released in setuptools 8.0 and pip
   which was deemed to be surprising behavior which was too hard to accurately
   describe. Instead the exclusive ordered comparisons will simply disallow
   matching pre-releases, post-releases, and local versions of the specified
-  version. For an extended discussion see the threads on distutils-sig
-  [6]_[7]_.
+  version (unless the specified version is itself a pre-release, post-release
+  or local version). For an extended discussion see the threads on
+  distutils-sig [6]_[7]_.
+
+* The normalized form for release candidates was updated from 'c' to 'rc'.
+  This change was based on user feedback received when setuptools 8.0
+  started applying normalisation to the release metadata generated when
+  preparing packages for publication on PyPI.
 
 
 References
@@ -1546,6 +1552,8 @@ justifications for needing such a standard can be found in PEP 386.
 .. [7] PEP440: >1.7 vs >=1.7
     https://mail.python.org/pipermail/distutils-sig/2014-December/025507.html
 
+.. [8] Amend PEP 440 with Wider Feedback on Release Candidates
+   https://mail.python.org/pipermail/distutils-sig/2014-December/025409.html
 
 Appendix A
 ==========
