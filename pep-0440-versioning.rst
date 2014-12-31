@@ -982,20 +982,29 @@ Local version identifiers are NOT permitted in this version specifier.
 Exclusive ordered comparison
 ----------------------------
 
-Exclusive ordered comparisons are similar to inclusive ordered comparisons,
-except that the comparison operators are ``<`` and ``>`` and the clause
-MUST be effectively interpreted as implying the prefix based version
-exclusion clause ``!= V.*``.
+The exclusive ordered comparisons ``>`` and ``<`` are similar to the inclusive
+ordered comparisons in that they rely on the relative position of the candidate
+version and the specified version given the consistent ordering defined by the
+standard `Version scheme`_. However, they specifically exclude pre-releases,
+post-releases, and local versions of the specified version.
 
-The exclusive ordered comparison ``> V`` MUST NOT match a post-release
-or maintenance release of the given version. Maintenance releases can be
-permitted by using the clause ``> V.0``, while both post releases and
-maintenance releases can be permitted by using the inclusive ordered
-comparison ``>= V.post1``.
+The exclusive ordered comparison ``>V`` **MUST NOT** allow a post-release
+of the given version unless ``V`` itself is a post release. You may mandate
+that releases are later than a particular post release, including additional
+post releases, by using ``>V.postN``. For example, ``>1.7`` will allow
+``1.7.1`` but not ``1.7.0.post1`` and ``>1.7.post2`` will allow ``1.7.1``
+and ``1.7.0.post3`` but not ``1.7.0``.
 
-The exclusive ordered comparison ``< V`` MUST NOT match a pre-release of
-the given version, even if acceptance of pre-releases is enabled as
-described in the section below.
+The exclusive ordered comparison ``>V`` **MUST NOT** match a local version of
+the specified version.
+
+The exclusive ordered comparison ``<V`` **MUST NOT** allow a pre-release of
+the specified version unless the specified version is itself a pre-release.
+Allowing pre-releases that are earlier than, but not equal to a specific
+pre-release may be accomplished by using ``<V.rc1`` or similar.
+
+As with version matching, the release segment is zero padded as necessary to
+ensure the release segments are compared with the same length.
 
 Local version identifiers are NOT permitted in this version specifier.
 
@@ -1346,9 +1355,7 @@ depend on updates to the installation database definition along with
 improved tools for dynamic path manipulation.
 
 The trailing wildcard syntax to request prefix based version matching was
-added to make it possible to sensibly define both compatible release clauses
-and the desired pre- and post-release handling semantics for ``<`` and ``>``
-ordered comparison clauses.
+added to make it possible to sensibly define compatible release clauses.
 
 
 Support for date based version identifiers
@@ -1497,6 +1504,21 @@ reason for this is that the Wheel normalization scheme specifies that ``-``
 gets normalized to a ``_`` to enable easier parsing of the filename.
 
 
+Summary of changes to \PEP 440
+==============================
+
+The following changes were made to this PEP based on feedback received after
+the initial reference implementation was released in setuptools 8.0 and pip
+6.0:
+
+* The exclusive ordered comparisons were updated to no longer imply a ``!=V.*``
+  which was deemed to be surprising behavior which was too hard to accurately
+  describe. Instead the exclusive ordered comparisons will simply disallow
+  matching pre-releases, post-releases, and local versions of the specified
+  version. For an extended discussion see the threads on distutils-sig
+  [6]_[7]_.
+
+
 References
 ==========
 
@@ -1517,6 +1539,12 @@ justifications for needing such a standard can be found in PEP 386.
 
 .. [5] Proof of Concept: PEP 440 within pip
     https://github.com/pypa/pip/pull/1894
+
+.. [6] PEP440: foo-X.Y.Z does not satisfy "foo>X.Y"
+    https://mail.python.org/pipermail/distutils-sig/2014-December/025451.html
+
+.. [7] PEP440: >1.7 vs >=1.7
+    https://mail.python.org/pipermail/distutils-sig/2014-December/025507.html
 
 
 Appendix A
