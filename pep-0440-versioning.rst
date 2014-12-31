@@ -31,7 +31,7 @@ Provisional status of this specification
 ========================================
 
 The version representation and comparison scheme described in this PEP is
-currently accepted on a provisional basis, as described in PEP 411.
+currently accepted on a provisional basis [9]_, as described in PEP 411.
 
 This status is based on feedback received on the initial releases of pip 6.0,
 and setuptools 8.0, which revealed some issues in the specification that
@@ -1554,6 +1554,9 @@ justifications for needing such a standard can be found in PEP 386.
 
 .. [8] Amend PEP 440 with Wider Feedback on Release Candidates
    https://mail.python.org/pipermail/distutils-sig/2014-December/025409.html
+
+.. [9] Changing the status of PEP 440 to Provisional
+   https://mail.python.org/pipermail/distutils-sig/2014-December/025412.html
 
 Appendix A
 ==========
