@@ -1522,7 +1522,7 @@ the initial reference implementation was released in setuptools 8.0 and pip
 * The normalized form for release candidates was updated from 'c' to 'rc'.
   This change was based on user feedback received when setuptools 8.0
   started applying normalisation to the release metadata generated when
-  preparing packages for publication on PyPI.
+  preparing packages for publication on PyPI [8]_.
 
 
 References
