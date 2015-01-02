@@ -1517,7 +1517,7 @@ the initial reference implementation was released in setuptools 8.0 and pip
   matching pre-releases, post-releases, and local versions of the specified
   version (unless the specified version is itself a pre-release, post-release
   or local version). For an extended discussion see the threads on
-  distutils-sig [6]_[7]_.
+  distutils-sig [6]_ [7]_.
 
 * The normalized form for release candidates was updated from 'c' to 'rc'.
   This change was based on user feedback received when setuptools 8.0
