@@ -1184,8 +1184,9 @@ Updating the versioning specification
 The versioning specification may be updated with clarifications without
 requiring a new PEP or a change to the metadata version.
 
-Actually changing the version comparison semantics still requires a new
-versioning scheme and metadata version defined in new PEPs.
+Once the Provisional caveat is removed from the specification, any further
+changes to the version comparison semantics will require an updated
+versioning scheme defined in a new PEP.
 
 
 Summary of differences from pkg_resources.parse_version
