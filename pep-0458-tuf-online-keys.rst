@@ -304,6 +304,16 @@ used in TUF.
 
 Figure 1: An overview of the TUF roles.
 
+Roles with different capabilities are used by TUF to compartmentalize trust.
+Metadata on the repository includes information about which keys are valid, the
+cryptographic hashes of packages and metadata, and the timeliness of available
+repository updates. Different roles sign for each type of metadata so that an
+attacker acquiring the key that specifies timeliness (which is kept online)
+does not also gain access to the key that signs for the trusted hashes of
+packages, or to the key that signs for the trusted repository keys.  Utilizing
+multiple roles allows TUF to delegate responsibilities and minimize the impact
+of a compromised role.
+
 
 Signing Metadata and Repository Management
 ------------------------------------------
