@@ -16,39 +16,41 @@ Created: 27-Sep-2013
 Abstract
 ========
 
-This PEP proposes how the Python Package Index (PyPI [1]_) should be integrated
-with The Update Framework [2]_ (TUF).  TUF was designed to be a flexible
-security add-on to a software updater or package manager.  The framework
-integrates best security practices such as separating role responsibilities,
-adopting the many-man rule for signing packages, keeping signing keys offline,
-and revocation of expired or compromised signing keys.  For example, attackers
-would have to steal multiple signing keys stored independently to compromise
-a role responsible for specifying a repository's available files.  Another role
-responsible for indicating the latest snapshot of the repository may have to be
-similarly compromised, and independent of the first compromised role.
+This PEP proposes how the Python Package Index [1]_ (PyPI) infrastructure can
+be amended to better protect end users from altered or malicious packages, and
+to minimize the extent of PyPI compromises against affected users.  The
+proposed integration allows package managers such as pip [3]_ to be more secure
+against various types of security attacks on PyPI and defend end users from
+attackers responding to package requests. Specifically, this PEP describes how
+PyPI processes should be adapted to generate and incorporate repository
+metadata, which are signed text files that describe the packages and metadata
+available on PyPI.  Package managers request, along with the packages, the
+metadata on PyPI to verify the authenticity of packages before they are
+installed.  The changes to PyPI and tools will be minimal by leveraging a
+library, The Update Framework [2]_ (TUF), that generates and transparently
+validates the relevant metadata.
 
-The proposed integration will allow modern package managers such as pip [3]_ to
-be more secure against various types of security attacks on PyPI and protect
-users from such attacks.  Specifically, this PEP describes how PyPI processes
-should be adapted to generate and incorporate TUF metadata (i.e., the minimum
-security model).  The minimum security model supports verification of PyPI
-distributions that are signed with keys stored on PyPI: distributions uploaded
-by developers are signed by PyPI, require no action from developers (other than
-uploading the distribution), and are immediately available for download.  The
-minimum security model also minimizes PyPI administrative responsibilities by
-automating much of the signing process.
+The proposed integration utilizes a basic security model that supports
+verification of PyPI packages signed with cryptographic keys stored on PyPI,
+requires no action from developers and end users, and protects against
+malicious CDNs and public mirrors. To support continuous delivery of uploaded
+packages, PyPI administrators sign for uploaded packages with an online key
+stored on PyPI infrastructure. This level of security prevents packages from
+being accidentally or deliberately tampered with by a mirror or a CDN because
+the mirror or CDN will not have any of the keys required to sign for projects.  
 
 This PEP does not prescribe how package managers such as pip should be adapted
-to install or update projects from PyPI with TUF metadata.   Package managers
-interested in adopting TUF on the client side may consult TUF's `library
-documentation`__, which exists for this purpose.  Support for project
-distributions that are signed by developers (maximum security model) is also
-not discussed in this PEP, but is outlined in the appendix as a possible future
-extension and covered in detail in PEP 480 [26]_.  The PEP 480 extension
-focuses on the maximum security model, which requires more PyPI administrative
-work (none by clients), but it also proposes an easy-to-use key management
-solution for developers, how to interface with a potential future build farm on
-PyPI infrastructure, and discusses the feasibility of end-to-end signing.
+to install projects from PyPI with TUF metadata.   Package managers interested
+in adopting TUF on the client side may consult TUF's `library documentation`__,
+which exists for this purpose.  Support for project distributions that are
+signed by developers is also not discussed in this PEP, but is outlined in the
+appendix as a possible future extension, and covered in detail in PEP 480
+[26]_.  The PEP 480 extension focuses on the end-to-end security model that
+requires more PyPI administrative work and none by clients.  End-to-end signing
+allows both PyPI and developers to sign for the packages that are downloaded by
+end users.  The extension also proposes an easy-to-use key management solution
+for developers, how to interface with a potential future build farm on PyPI
+infrastructure, and discusses the security benefits of end-to-end signing.
 
 __ https://github.com/theupdateframework/tuf/tree/develop/tuf/client#updaterpy
 
