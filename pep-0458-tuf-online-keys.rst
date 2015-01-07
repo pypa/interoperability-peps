@@ -237,11 +237,36 @@ TUF is designed to address these attacks, and others, by adding signed metadata
 (text files that describe the repository's files) to the repository and
 referencing the metadata files during the update procedure.  Repository files
 are verified against the information included in the metadata before they are
-handed off to the software update system.  The framework also provides
+transferred to the software update system.  The framework also provides
 multi-signature trust, explicit and implicit revocation of cryptograhic keys,
 responsibility separation of the metadata, and minimizes key risk.  For a full
 list and outline of the repository attacks and software updater weaknesses
 addressed by TUF, see Appendix A.
+
+In addition to requiring that TUF metadata exist on the repository,
+software updaters must download and reference TUF metadata in a particular
+order to guarantee they are also updated securely. Verifying and fetching
+metadata is managed by TUF once an update is initiated by the software
+updater.
+
+Overview of the update process:
+
+The following steps are performed by TUF during a software update.
+
+1. TUF downloads and verifies *timestamp.json*.
+
+2. If *timestamp.json* indicates that *snapshot.json* has changed, TUF
+downloads and verifies *release.json.*.
+
+3. TUF determines which metadata files listed in *snapshot.json* differ from
+those described in the last *snapshot.json* that TUF has referenced. If
+*root.json* has changed, the update process starts over using the new
+*root.json*.
+
+4. TUF provides the software update system with a list of available projects
+according to *targets.json*.
+
+5. The software update system instructs TUF to download a specific package.
 
 
 Integrating TUF with PyPI
