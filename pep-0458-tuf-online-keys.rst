@@ -158,12 +158,18 @@ Terms used in this PEP are defined as follows:
 
 * Roles: There is one *root* role in PyPI.  There are multiple roles whose
   responsibilities are delegated to them directly or indirectly by the *root*
-  role. The term top-level role refers to the *root* role and any role
+  role. The term **top-level** role refers to the *root* role and any role
   delegated by the *root* role. Each role has a single metadata file that it is
   trusted to provide.
 
 * Metadata: Metadata are signed files that describe roles, other metadata, and
   target files.
+
+* Delegation: A role may delegate trust of some or all of its responsibilities
+  to another role.  A delegation is denoted by modifying the metadata of the
+  role that is designating responsibility.  Delegated roles may provide their
+  own metadata once the delegation has been performed, and according to the
+  privileges specified by the parent role.
 
 * Repository: A repository is a resource comprised of named metadata and target
   files.  Clients request metadata and target files stored on a repository.
@@ -307,14 +313,18 @@ used in TUF.
 Figure 1: An overview of the TUF roles.
 
 
-Signing Metadata and Repository Management
-------------------------------------------
+Repository Management
+---------------------
 
-The top-level *root* role signs for the keys of the top-level *timestamp*,
-*snapshot*, *targets*, and *root* roles.  The *timestamp* role signs for every
-new snapshot of the repository metadata.  The *snapshot* role signs for *root*,
-*targets*, and all delegated roles.  The *bins* roles (delegated roles) sign
-for all distributions belonging to registered PyPI projects.
+The roles that change most frequently are *timestamp*, *snapshot* and delegated
+roles.  The *timestamp* and *snapshot* metadata MUST be updated whenever
+*root*, *targets* or delegated metadata are updated.  Observe, though, that
+*root* and *targets* metadata are much less likely to be updated as often as
+delegated metadata.  Therefore, *timestamp* and *snapshot* metadata will most
+likely be updated frequently (possibly every minute) due to delegated metadata
+being updated frequently in order to support continuous delivery of projects.
+Continuous delivery is a set of processes that PyPI uses produce snapshots that
+can safely coexist and be deleted independent of other snapshots [18]_.
 
 Figure 2 provides an overview of the roles available within PyPI, which
 includes the top-level roles and the roles delegated by *targets*.  The figure
@@ -326,23 +336,58 @@ details of signing repository files and the types of keys used for each role.
 
 Figure 2: An overview of the role metadata available on PyPI.
 
-The roles that change most frequently are *timestamp*, *snapshot* and delegated
-roles (*bins* and its delegated roles).  The *timestamp* and *snapshot*
-metadata MUST be updated whenever *root*, *targets* or delegated metadata are
-updated.  Observe, though, that *root* and *targets* metadata are much less
-likely to be updated as often as delegated metadata.  Therefore, *timestamp*
-and *snapshot* metadata will most likely be updated frequently (possibly every
-minute) due to delegated metadata being updated frequently in order to support
-continuous delivery of projects.  Continuous delivery is a set of processes
-that PyPI uses produce snapshots that can safely coexist and be deleted
-independent of other snapshots [18]_.
+The top-level *root* role signs for the keys of the top-level *timestamp*,
+*snapshot*, *targets*, and *root* roles.  The *timestamp* role signs for every
+new snapshot of the repository metadata.  The *snapshot* role signs for *root*,
+*targets*, and all delegated roles.  The *bins* roles (delegated roles) sign
+for all distributions belonging to registered PyPI projects.
 
 Every year, PyPI administrators SHOULD sign for *root* and *targets* role keys.
 Automation will continuously sign for a timestamped, snapshot of all projects.
-A `repository management`__ tool is available that can sign metadata files,
-generate cryptographic keys, and manage a TUF repository.
+A `repository management`__ tool is available that can generate and sign
+metadata for all roles, generate cryptographic keys, revoke keys, and sign
+releases.  The top-level roles are required and are available by default in the
+repository management tool, but the other delegated roles used in PyPI must be
+manually specified.
 
 __ https://github.com/theupdateframework/tuf/tree/develop/tuf#repository-management
+
+
+Specifying Delegations
+----------------------
+
+In order to specify role delegations, TUF metadata must be updated to include
+information about the delegation (i.e., the name of the role being delegated,
+its public keys, and the packages the delegatee is trusted to sign).  PyPI
+administrators may use the repository management tool to specify the other
+delegated roles as outlined in figure 2. 
+
+Specifying a delegation with the repository management tool updates the
+metadata of the parent role by adding a *delegations* entry to its metadata
+file.  The parent role specifies the public keys of the delegated role, its
+role name, and the paths it is trusted to provide. Once a parent role has
+delegated trust, delegated roles may add targets and generate signed metadata
+according to the keys and paths allowed by the parent. Figure 5 illustrates the
+relationships between roles in TUF. A nested delegation is made from the
+top-level projects role to the delegated roles named *targets/foo* and
+*targets/bar*.
+
+An example of specifying a delegation with the repository management tool:
+
+.. code-block:: python
+
+  from tuf.repository_tool import *
+
+  repository = load_repository("path/to/repository")
+  pypi_signed_pub = import_ed25519_publickey_from_file("keystore/pypi-signed.pub")
+  pypi_signed_key = import_ed25519_privatekey_from_file("keystore/pypi-signed", password="pw")
+  repository.targets.delegate("pypi-signed", [pypi_signed_pub], [],
+                     restricted_paths=["path/to/repository/targets/packages/"])
+  repository.targets("pypi-signed").load_signing_key(pypi_signed_key)
+  
+  ...
+  
+  repository.write()
 
 
 How to Establish Initial Trust in the PyPI Root Keys
