@@ -389,6 +389,11 @@ An example of specifying a delegation with the repository management tool:
   
   repository.write()
 
+The repository management documentation includes more information on
+specifying `delegations`__.
+
+__ https://github.com/theupdateframework/tuf/tree/develop/tuf#delegations
+
 
 How to Establish Initial Trust in the PyPI Root Keys
 ----------------------------------------------------
