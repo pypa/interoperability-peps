@@ -326,7 +326,7 @@ being updated frequently in order to support continuous delivery of projects.
 Continuous delivery is a set of processes that PyPI uses produce snapshots that
 can safely coexist and be deleted independent of other snapshots [18]_.
 
-Figure 2 provides an overview of the roles available within PyPI, which
+Figure 3 provides an overview of the roles available within PyPI, which
 includes the top-level roles and the roles delegated by *targets*.  The figure
 also indicates the types of keys used to sign each role and which roles are
 trusted to sign for files available on PyPI.  The next two sections cover the
@@ -360,14 +360,14 @@ In order to specify role delegations, TUF metadata must be updated to include
 information about the delegation (i.e., the name of the role being delegated,
 its public keys, and the packages the delegatee is trusted to sign).  PyPI
 administrators may use the repository management tool to specify the other
-delegated roles as outlined in figure 2. 
+delegated roles as outlined in figure 3.
 
 Specifying a delegation with the repository management tool updates the
 metadata of the parent role by adding a *delegations* entry to its metadata
 file.  The parent role specifies the public keys of the delegated role, its
 role name, and the paths it is trusted to provide. Once a parent role has
 delegated trust, delegated roles may add targets and generate signed metadata
-according to the keys and paths allowed by the parent. Figure 5 illustrates the
+according to the keys and paths allowed by the parent. Figure 2 illustrates the
 relationships between roles in TUF. A nested delegation is made from the
 top-level projects role to the delegated roles named *targets/foo* and
 *targets/bar*.
