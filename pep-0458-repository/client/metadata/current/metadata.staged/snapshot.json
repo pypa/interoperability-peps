@@ -1,0 +1,130 @@
+{
+ "signatures": [
+  {
+   "keyid": "b92ab291169aaa7cc4868230d73106b9f5da1318fc403e9debd231b76d6ca9c2",
+   "method": "ed25519",
+   "sig": "0454b7b276b2f92e7440fca60b87ee532c8b5e85be254f62c72cc8518cd277d376197e6b7d6d32f9d09688662edf2da93b6471c4937be5952eff42c0530bff03"
+  }
+ ],
+ "signed": {
+  "_type": "Snapshot",
+  "expires": "2015-01-16T22:36:12Z",
+  "meta": {
+   "root.json": {
+    "hashes": {
+     "sha256": "a3e91f700b8d13219b9b3d9240fe150757bbb12e45b0062cce5d28ef267a7dbf"
+    },
+    "length": 2909
+   },
+   "targets.json": {
+    "hashes": {
+     "sha256": "9dc646b12e20fc2b44c4f7906fab77bae3f57283a150944c5fa36c89008b388b"
+    },
+    "length": 893
+   },
+   "targets/pypi-signed.json": {
+    "hashes": {
+     "sha256": "5f96edeb5eb793e3863ad847de999fd9f40060c60200448c98345631b9a3d4a7"
+    },
+    "length": 4499
+   },
+   "targets/pypi-signed/0.json": {
+    "hashes": {
+     "sha256": "207d17d28e9cc6872298e0072e5190b1bf44e240902994e8ba3023129e78c185"
+    },
+    "length": 438
+   },
+   "targets/pypi-signed/1.json": {
+    "hashes": {
+     "sha256": "259d9b55a64af8cedb6f6e7cf6a34a78efc3080bf09c318c809032f70b94a036"
+    },
+    "length": 618
+   },
+   "targets/pypi-signed/2.json": {
+    "hashes": {
+     "sha256": "207d17d28e9cc6872298e0072e5190b1bf44e240902994e8ba3023129e78c185"
+    },
+    "length": 438
+   },
+   "targets/pypi-signed/3.json": {
+    "hashes": {
+     "sha256": "207d17d28e9cc6872298e0072e5190b1bf44e240902994e8ba3023129e78c185"
+    },
+    "length": 438
+   },
+   "targets/pypi-signed/4.json": {
+    "hashes": {
+     "sha256": "87c2dbe50d2a69d6348b7e116c195f6665439b383dfbf23eaed766d135158f62"
+    },
+    "length": 638
+   },
+   "targets/pypi-signed/5.json": {
+    "hashes": {
+     "sha256": "b245bc4cadb845b1ebe77690519820a2aa51977728cfb98bd57f019679e07723"
+    },
+    "length": 718
+   },
+   "targets/pypi-signed/6.json": {
+    "hashes": {
+     "sha256": "207d17d28e9cc6872298e0072e5190b1bf44e240902994e8ba3023129e78c185"
+    },
+    "length": 438
+   },
+   "targets/pypi-signed/7.json": {
+    "hashes": {
+     "sha256": "207d17d28e9cc6872298e0072e5190b1bf44e240902994e8ba3023129e78c185"
+    },
+    "length": 438
+   },
+   "targets/pypi-signed/8.json": {
+    "hashes": {
+     "sha256": "43640d3b2a55677f69bb4e5a1a57f517689986d0434735d0a9efae79dd0c4127"
+    },
+    "length": 632
+   },
+   "targets/pypi-signed/9.json": {
+    "hashes": {
+     "sha256": "207d17d28e9cc6872298e0072e5190b1bf44e240902994e8ba3023129e78c185"
+    },
+    "length": 438
+   },
+   "targets/pypi-signed/a.json": {
+    "hashes": {
+     "sha256": "207d17d28e9cc6872298e0072e5190b1bf44e240902994e8ba3023129e78c185"
+    },
+    "length": 438
+   },
+   "targets/pypi-signed/b.json": {
+    "hashes": {
+     "sha256": "207d17d28e9cc6872298e0072e5190b1bf44e240902994e8ba3023129e78c185"
+    },
+    "length": 438
+   },
+   "targets/pypi-signed/c.json": {
+    "hashes": {
+     "sha256": "c10d641395bec2dbeb198d6846eb2a42ce7bd1267867fd4dd2cae9bd224ed43d"
+    },
+    "length": 635
+   },
+   "targets/pypi-signed/d.json": {
+    "hashes": {
+     "sha256": "207d17d28e9cc6872298e0072e5190b1bf44e240902994e8ba3023129e78c185"
+    },
+    "length": 438
+   },
+   "targets/pypi-signed/e.json": {
+    "hashes": {
+     "sha256": "46beaf9baeb6be7683926bb77c61d7f2a5e7f9525c5069c12103fc498bb1c9f5"
+    },
+    "length": 624
+   },
+   "targets/pypi-signed/f.json": {
+    "hashes": {
+     "sha256": "aaeb41cacf9426a7f878ec57112261021240e010e624e89c1eda97f232a47d7a"
+    },
+    "length": 797
+   }
+  },
+  "version": 1
+ }
+}

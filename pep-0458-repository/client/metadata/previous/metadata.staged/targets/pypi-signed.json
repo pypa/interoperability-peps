@@ -1,0 +1,203 @@
+{
+ "signatures": [
+  {
+   "keyid": "494e4ec5a9aa8286a0320a8edc242dc180a35670ec70bca5c4223502bb991a36",
+   "method": "ed25519",
+   "sig": "e4c149b6713d8b38202712cc5f6633c611cdbb9591cd68579bebe797f0af4c78fa1f1f40a059842fa3c33eae9fe221eddc56f13c816153123aa71a7b21d5a704"
+  }
+ ],
+ "signed": {
+  "_type": "Targets",
+  "delegations": {
+   "keys": {
+    "494e4ec5a9aa8286a0320a8edc242dc180a35670ec70bca5c4223502bb991a36": {
+     "keytype": "ed25519",
+     "keyval": {
+      "public": "3fa12430f1edf19e9a261ea9bca8c0310cf4311e67b2820e62a419e481ac0415"
+     }
+    }
+   },
+   "roles": [
+    {
+     "backtrack": true,
+     "keyids": [
+      "494e4ec5a9aa8286a0320a8edc242dc180a35670ec70bca5c4223502bb991a36"
+     ],
+     "name": "targets/pypi-signed/0",
+     "path_hash_prefixes": [
+      "0"
+     ],
+     "threshold": 1
+    },
+    {
+     "backtrack": true,
+     "keyids": [
+      "494e4ec5a9aa8286a0320a8edc242dc180a35670ec70bca5c4223502bb991a36"
+     ],
+     "name": "targets/pypi-signed/1",
+     "path_hash_prefixes": [
+      "1"
+     ],
+     "threshold": 1
+    },
+    {
+     "backtrack": true,
+     "keyids": [
+      "494e4ec5a9aa8286a0320a8edc242dc180a35670ec70bca5c4223502bb991a36"
+     ],
+     "name": "targets/pypi-signed/2",
+     "path_hash_prefixes": [
+      "2"
+     ],
+     "threshold": 1
+    },
+    {
+     "backtrack": true,
+     "keyids": [
+      "494e4ec5a9aa8286a0320a8edc242dc180a35670ec70bca5c4223502bb991a36"
+     ],
+     "name": "targets/pypi-signed/3",
+     "path_hash_prefixes": [
+      "3"
+     ],
+     "threshold": 1
+    },
+    {
+     "backtrack": true,
+     "keyids": [
+      "494e4ec5a9aa8286a0320a8edc242dc180a35670ec70bca5c4223502bb991a36"
+     ],
+     "name": "targets/pypi-signed/4",
+     "path_hash_prefixes": [
+      "4"
+     ],
+     "threshold": 1
+    },
+    {
+     "backtrack": true,
+     "keyids": [
+      "494e4ec5a9aa8286a0320a8edc242dc180a35670ec70bca5c4223502bb991a36"
+     ],
+     "name": "targets/pypi-signed/5",
+     "path_hash_prefixes": [
+      "5"
+     ],
+     "threshold": 1
+    },
+    {
+     "backtrack": true,
+     "keyids": [
+      "494e4ec5a9aa8286a0320a8edc242dc180a35670ec70bca5c4223502bb991a36"
+     ],
+     "name": "targets/pypi-signed/6",
+     "path_hash_prefixes": [
+      "6"
+     ],
+     "threshold": 1
+    },
+    {
+     "backtrack": true,
+     "keyids": [
+      "494e4ec5a9aa8286a0320a8edc242dc180a35670ec70bca5c4223502bb991a36"
+     ],
+     "name": "targets/pypi-signed/7",
+     "path_hash_prefixes": [
+      "7"
+     ],
+     "threshold": 1
+    },
+    {
+     "backtrack": true,
+     "keyids": [
+      "494e4ec5a9aa8286a0320a8edc242dc180a35670ec70bca5c4223502bb991a36"
+     ],
+     "name": "targets/pypi-signed/8",
+     "path_hash_prefixes": [
+      "8"
+     ],
+     "threshold": 1
+    },
+    {
+     "backtrack": true,
+     "keyids": [
+      "494e4ec5a9aa8286a0320a8edc242dc180a35670ec70bca5c4223502bb991a36"
+     ],
+     "name": "targets/pypi-signed/9",
+     "path_hash_prefixes": [
+      "9"
+     ],
+     "threshold": 1
+    },
+    {
+     "backtrack": true,
+     "keyids": [
+      "494e4ec5a9aa8286a0320a8edc242dc180a35670ec70bca5c4223502bb991a36"
+     ],
+     "name": "targets/pypi-signed/a",
+     "path_hash_prefixes": [
+      "a"
+     ],
+     "threshold": 1
+    },
+    {
+     "backtrack": true,
+     "keyids": [
+      "494e4ec5a9aa8286a0320a8edc242dc180a35670ec70bca5c4223502bb991a36"
+     ],
+     "name": "targets/pypi-signed/b",
+     "path_hash_prefixes": [
+      "b"
+     ],
+     "threshold": 1
+    },
+    {
+     "backtrack": true,
+     "keyids": [
+      "494e4ec5a9aa8286a0320a8edc242dc180a35670ec70bca5c4223502bb991a36"
+     ],
+     "name": "targets/pypi-signed/c",
+     "path_hash_prefixes": [
+      "c"
+     ],
+     "threshold": 1
+    },
+    {
+     "backtrack": true,
+     "keyids": [
+      "494e4ec5a9aa8286a0320a8edc242dc180a35670ec70bca5c4223502bb991a36"
+     ],
+     "name": "targets/pypi-signed/d",
+     "path_hash_prefixes": [
+      "d"
+     ],
+     "threshold": 1
+    },
+    {
+     "backtrack": true,
+     "keyids": [
+      "494e4ec5a9aa8286a0320a8edc242dc180a35670ec70bca5c4223502bb991a36"
+     ],
+     "name": "targets/pypi-signed/e",
+     "path_hash_prefixes": [
+      "e"
+     ],
+     "threshold": 1
+    },
+    {
+     "backtrack": true,
+     "keyids": [
+      "494e4ec5a9aa8286a0320a8edc242dc180a35670ec70bca5c4223502bb991a36"
+     ],
+     "name": "targets/pypi-signed/f",
+     "path_hash_prefixes": [
+      "f"
+     ],
+     "threshold": 1
+    }
+   ]
+  },
+  "expires": "2015-04-11T06:03:29Z",
+  "targets": {},
+  "version": 1
+ }
+}
