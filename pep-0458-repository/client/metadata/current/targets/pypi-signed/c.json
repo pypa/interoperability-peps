@@ -1,0 +1,26 @@
+{
+ "signatures": [
+  {
+   "keyid": "494e4ec5a9aa8286a0320a8edc242dc180a35670ec70bca5c4223502bb991a36",
+   "method": "ed25519",
+   "sig": "a50f3f1b518812209f393c2ef791846c14c81227e4a31663e06089bae89494539e122a336fd45a75cf56b76dfcf95a117970ea8b9faaf4ac111e4141cdf12b0d"
+  }
+ ],
+ "signed": {
+  "_type": "Targets",
+  "delegations": {
+   "keys": {},
+   "roles": []
+  },
+  "expires": "2015-04-11T06:03:29Z",
+  "targets": {
+   "/packages/requests/requests-2.5.1-py2.py3-none-any.whl": {
+    "hashes": {
+     "sha256": "1f046dcf5ec712ed3be8684b9f33c95b76e28cd1c825db0f5e1557bfd87b3745"
+    },
+    "length": 464421
+   }
+  },
+  "version": 1
+ }
+}

@@ -325,7 +325,8 @@ metadata files (other than *timestamp*).  The *targets* role lists the
 available target files (in our case, it will be all files on PyPI under the
 /simple and /packages directories).  Each top-level role will serve its
 responsibilities without exception.  Figure 1 provides a table of the roles
-used in TUF.
+used in TUF.  Figure 2 illustrates the relationships between the different
+roles and the content of TUF metadata. 
 
 .. image:: pep-0458-1.png
 
@@ -340,6 +341,9 @@ does not also gain access to the key that signs for the trusted hashes of
 packages, or to the key that signs for the trusted repository keys.  Utilizing
 multiple roles allows TUF to delegate responsibilities and minimize the impact
 of a compromised role.
+.. image:: pep-0458-2.png
+
+Figure 2: An illustration of example TUF metadata.
 
 
 Signing Metadata and Repository Management
@@ -351,13 +355,13 @@ new snapshot of the repository metadata.  The *snapshot* role signs for *root*,
 *targets*, and all delegated roles.  The *bins* roles (delegated roles) sign
 for all distributions belonging to registered PyPI projects.
 
-Figure 2 provides an overview of the roles available within PyPI, which
+Figure 3 provides an overview of the roles available within PyPI, which
 includes the top-level roles and the roles delegated by *targets*.  The figure
 also indicates the types of keys used to sign each role and which roles are
 trusted to sign for files available on PyPI.  The next two sections cover the
 details of signing repository files and the types of keys used for each role.
 
-.. image:: pep-0458-2.png
+.. image:: pep-0458-3.png
 
 Figure 2: An overview of the role metadata available on PyPI.
 
@@ -994,7 +998,7 @@ all of the projects are signed by an online key.  An attacker can corrupt
 packages in the minimum security model, but not in the maximum model without
 also compromising a developer's key.
 
-.. image:: pep-0458-3.png
+.. image:: pep-0458-4.png
 
 Figure 3: An overview of the metadata layout in the maximum security model.
 The maximum security model supports continuous delivery and survivable key
