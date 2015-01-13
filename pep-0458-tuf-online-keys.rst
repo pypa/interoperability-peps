@@ -499,16 +499,78 @@ SHOULD also be made available to clients.
 PyPI and Key Requirements
 =========================
 
-In this section, the kinds of keys required to sign for TUF roles on PyPI are
-examined.  TUF is agnostic with respect to choices of digital signature
-algorithms.  For the purpose of discussion, it is assumed that most digital
-signatures will be produced with the well-tested and tried RSA algorithm [20]_.
-Nevertheless, we do NOT recommend any particular digital signature algorithm in
-this PEP because there are a few important constraints: first, cryptography
-changes over time; second, package managers such as pip may wish to perform
-signature verification in Python, without resorting to a compiled C library, in
-order to be able to run on as many systems as Python supports; and third, TUF
-recommends diversity of keys for certain applications.
+In this section, the types and number keys required to sign for TUF metadata
+are discussed.  TUF is agnostic with respect to the digital signature
+algorithms that can be used to sign metadata, however, the Ed25519 signature
+scheme [25]_ SHOULD be used by PyPI administrators to sign the TUF metadata.
+
+The package manager (pip) shipped with CPython MUST work on non-CPython
+interpreters and cannot have dependencies that have to be compiled (i.e., the
+PyPI + TUF integration MUST NOT require compilation of C extensions in order to
+verify cryptographic signatures). Verification of signatures MUST be done in
+Python, and verifying RSA [20]_ signatures in pure-Python may be impractical due
+to speed. Therefore, PyPI SHOULD use the Ed25519 signature scheme.
+
+
+Cryptographic Signature Scheme
+------------------------------
+
+Ed25519 is a public-key signature system that uses small cryptographic
+signatures and keys. A pure-Python implementation [27]_ of the Ed25519
+signature scheme is available. Verification of Ed25519 signatures is fast even
+when performed in Python.
+
+
+Cryptographic Key Files
+-----------------------
+
+The implementation MAY encrypt key files with AES-256-CTR-Mode and strengthen
+passwords with PBKDF2-HMAC-SHA256 (100K iterations by default, but this may be
+overridden by the developer). The current Python implementation of TUF can use
+any cryptographic library (support for PyCA cryptography will be added in the
+future), may override the default number of PBKDF2 iterations, and the KDF
+tweaked to preference.
+
+
+Generating Cryptographic Keys and Signing Metadata
+--------------------------------------------------
+
+The repository management tool may be used to generate cryptographic keys and
+sign the PyPI metadata downloaded by end users.  The following Python code
+demonstrates how to generate and import cryptographic keys with the repository
+management tool:
+
+.. code-block::
+
+  >>> from tuf.repository_tool import *
+
+  # Generate and write an ed25519 key pair.  The private key is saved encrypted.
+  # A 'password' argument may be supplied, otherwise a prompt is presented.
+  >>> generate_and_write_ed25519_keypair('/path/to/ed25519_key')
+  Enter a password for the ED25519 key: 
+  Confirm:
+
+  # Import the ed25519 public key just created . . .
+  >>> public_ed25519_key = import_ed25519_publickey_from_file('/path/to/ed25519_key.pub')
+
+  # and its corresponding private key.
+  >>> private_ed25519_key = import_ed25519_privatekey_from_file('/path/to/ed25519_key')
+  Enter a password for the encrypted ED25519 key: 
+
+
+Loading a 'on-pypi' key and generating a signed metadata file:
+
+.. code-block::
+  
+  repository.snapshot.load_signing_key(import_ed25519_privatekey_from_file("keystore/snapshot", password='pw'))
+  repository.write()
+
+
+How are signatures generated?
+-----------------------------
+
+TODO:
+
 
 
 Number Of Keys Recommended
@@ -1115,6 +1177,7 @@ References
 .. [24] https://pypi.python.org/pypi/pycrypto
 .. [25] http://ed25519.cr.yp.to/
 .. [26] https://www.python.org/dev/peps/pep-0480/
+.. [27] https://github.com/pyca/ed25519
 
 
 Acknowledgements
