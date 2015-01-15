@@ -1050,17 +1050,17 @@ Maximum Security Model
 
 The maximum security model relies on developers signing their projects and
 uploading signed metadata to PyPI.  If the PyPI infrastructure were to be
-compromised, attackers would be unable to serve malicious versions of claimed
-projects without access to the project's developer key.  Figure 3 depicts the
-changes made to figure 2, namely that developer roles are now supported and
-that three new delegated roles exist: *claimed*, *recently-claimed*, and
-*unclaimed*.  The *pypi-signed* role has been renamed *unclaimed* and can
-contain any projects that have not been added to *claimed*.  The strength of
-this model (over the minimum security model) is in the off-pypi keys provided
-by developers.  Although the minimum security model supports continuous
-delivery, all of the projects are signed by an on-pypi key.  An attacker can
-corrupt packages in the minimum security model, but not in the maximum model
-without also compromising a developer's key.
+compromised, attackers would be unable to serve malicious versions of
+developer-signed projects without access to the project's developer key.
+Figure 3 depicts the changes made to figure 2, namely that developer roles are
+now supported and that two new delegated roles exist: *developer-signed* and
+*recently-developer-signed*.  The *pypi-signed* role has not changed and can
+contain any projects that have not been added to *developer-signed*.  The
+strength of this model (over the minimum security model) is in the off-pypi
+keys provided by developers.  Although the minimum security model supports
+continuous delivery, all of the projects are signed by an on-pypi key.  An
+attacker can corrupt packages in the minimum security model, but not in the
+maximum model without also compromising a developer's key.
 
 .. image:: pep-0458-4.png
 
