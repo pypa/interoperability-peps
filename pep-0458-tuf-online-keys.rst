@@ -499,44 +499,44 @@ SHOULD also be made available to clients.
 PyPI and Key Requirements
 =========================
 
-In this section, the types and number keys required to sign for TUF metadata
-are discussed.  TUF is agnostic with respect to the digital signature
-algorithms that can be used to sign metadata, however, the Ed25519 signature
-scheme [25]_ SHOULD be used by PyPI administrators to sign the TUF metadata.
+The number of keys, and key type, required to sign the TUF metadata are
+discussed in this section.  TUF is agnostic with respect to the digital
+signature algorithms allowed to sign the TUF metadata, however, the Ed25519
+signature scheme [25]_ SHOULD be used by PyPI administrators.
+
+Ed25519 is a public-key signature system that uses small cryptographic
+signatures and keys. A pure-Python implementation [27]_ of the Ed25519
+signature scheme is available, and verification of Ed25519 signatures is fast
+even when performed in Python.
 
 The package manager (pip) shipped with CPython MUST work on non-CPython
 interpreters and cannot have dependencies that have to be compiled (i.e., the
 PyPI + TUF integration MUST NOT require compilation of C extensions in order to
 verify cryptographic signatures). Verification of signatures MUST be done in
-Python, and verifying RSA [20]_ signatures in pure-Python may be impractical due
-to speed. Therefore, PyPI SHOULD use the Ed25519 signature scheme.
-
-
-Cryptographic Signature Scheme
-------------------------------
-
-Ed25519 is a public-key signature system that uses small cryptographic
-signatures and keys. A pure-Python implementation [27]_ of the Ed25519
-signature scheme is available. Verification of Ed25519 signatures is fast even
-when performed in Python.
+Python, and verifying RSA [20]_ signatures in pure-Python may be impractical
+due to speed. Therefore, PyPI SHOULD use the Ed25519 signature scheme.
 
 
 Cryptographic Key Files
 -----------------------
 
-The implementation MAY encrypt key files with AES-256-CTR-Mode and strengthen
-passwords with PBKDF2-HMAC-SHA256 (100K iterations by default, but this may be
-overridden by the developer). The current Python implementation of TUF can use
-any cryptographic library (support for PyCA cryptography will be added in the
-future), may override the default number of PBKDF2 iterations, and the KDF
-tweaked to preference.
+Cryptographic keys MAY be stored in password-protected, encrypted key files.
+Administrators MAY use the repository tool to encrypt key files with
+AES-256-CTR-Mode and strengthen passwords with PBKDF2-HMAC-SHA256 (100K
+iterations by default, but this may be overridden by the developer). The
+current Python implementation of TUF can use any cryptographic library
+(PyCrypto [24]_ is currently used to encrypt the TUF key files, but support for
+PyCA Cryptography can be added in the future), may override the default number
+of PBKDF2 iterations, and the KDF tweaked to preference.  However, the exact
+cryptographic constructions can be adjusted to include future primitives added
+by the cryptographic libraries supported.
 
 
 Generating Cryptographic Keys and Signing Metadata
 --------------------------------------------------
 
-The repository management tool may be used to generate cryptographic keys and
-sign the PyPI metadata downloaded by end users.  The following Python code
+The repository management tool may be used to generate the cryptographic keys
+and sign the PyPI metadata downloaded by end users.  The following Python code
 demonstrates how to generate and import cryptographic keys with the repository
 management tool:
 
@@ -558,7 +558,10 @@ management tool:
   Enter a password for the encrypted ED25519 key: 
 
 
-Loading a 'on-pypi' key and generating a signed metadata file:
+The repository tool can use the cryptographic keys that are imported to sign
+particular roles.  In the code sample that follows, an 'on-pypi' key is loaded
+for the *snapshot* role and the signed *snapshot* metadata file written to
+disk with **repository.write()**:
 
 .. code-block::
   
@@ -569,8 +572,33 @@ Loading a 'on-pypi' key and generating a signed metadata file:
 How are signatures generated?
 -----------------------------
 
-TODO:
+Using the Ed25519 signature scheme, the "signed" dictionary entry of JSON
+metadata is transformed to its `canonical JSON`__ form to produce repeatable
+signatures and hashes.  The generated Ed25519 signature is appended to the
+"signatures" entry of JSON metadata.
 
+__ http://wiki.laptop.org/go/Canonical_JSON
+
+
+Signed JSON metadata has the following format:
+
+{
+  "signed" : ROLE,
+  "signatures" : [
+    { "keyid" : KEYID,
+      "method" : METHOD,
+      "sig" : SIGNATURE,
+    },
+    ...
+  ]
+}
+
+ROLE is a dictionary whose "_type" field describes the role type.
+KEYID is the identifier (64-byte hexstring) of the key signing the ROLE dictionary.
+METHOD is the key signing method used to generate the signature.  Specifically,
+the string: "ed25519".
+SIGNATURE is an Ed25519 signature (<128-byte hexstring) of the canonical JSON
+form of ROLE.
 
 
 Number Of Keys Recommended
@@ -633,19 +661,19 @@ Project developers expect the distributions they upload to PyPI to be
 immediately available for download.  Unfortunately, there will be problems when
 many readers and writers simultaneously access the same metadata and
 distributions.  That is, there needs to be a way to ensure consistency of
-metadata and repository files when multiple developers simulaneously change the
-same metadata or distributions.  There are also issues with consistency on PyPI
-without TUF, but the problem is more severe with signed metadata that MUST keep
-track of the files available on PyPI in real-time.
+metadata and repository files when multiple developers simultaneously update
+the same metadata or distributions.  Without TUF, there are also issues with
+consistency on PyPI, but the problem is more severe with signed metadata that
+MUST keep track in real-time the files available on PyPI.
 
-Suppose that PyPI generates a *snapshot*, which indicates the latest version of
-every metadata except *timestamp*, at version 1 and a client requests this
-*snapshot* from PyPI.  While the client is busy downloading this *snapshot*,
-PyPI then timestamps a new snapshot at, say, version 2.  Without ensuring
-consistency of metadata, the client would find itself with a copy of *snapshot*
-that disagrees with what is available on PyPI, which is indistinguishable from
-arbitrary metadata injected by an attacker.  The problem would also occur for
-mirrors attempting to sync with PyPI.
+Suppose that PyPI generates a *snapshot*, which describes the latest version of
+every metadata (except *timestamp*), at specified version 1, and that a client
+requests this *snapshot* from PyPI.  While the client is busy downloading this
+*snapshot*, PyPI timestamps a new snapshot at, say, version 2.  Without
+ensuring consistency of metadata, the client would find itself with a copy of
+*snapshot* that is inconsistent with what is available on PyPI: this situation
+is indistinguishable from arbitrary metadata injected by an attacker.  The
+problem would also occur with mirrors attempting to sync with PyPI.
 
 
 Consistent Snapshots
@@ -653,31 +681,30 @@ Consistent Snapshots
 
 There are problems with consistency on PyPI with or without TUF.  TUF requires
 that its metadata be consistent with the repository files, but how would the
-metadata be kept consistent with projects that change all the time?  As a
-result, this proposal MUST address the problem of producing a consistent
-snapshot that captures the state of all known projects at a given time.  Each
-snapshot should safely coexist with any other snapshot, and be able to be
-deleted independently, without affecting any other snapshot.
+metadata be kept consistent for projects that change all the time?  This
+proposal addresses the problem of producing a consistent snapshot that captures
+the state of all known projects at a given time.  Each snapshot should safely
+coexist with any other snapshot, and be able to be deleted independently,
+without affecting any other snapshot.
 
-The solution presented in this PEP is that every metadata or data file managed
-by PyPI and written to disk MUST include in its filename the `cryptographic
-hash`__ of the file.  How would this help clients that use the TUF protocol to
+The strategy or method presented in this PEP is that every metadata or data
+file managed by PyPI and written to disk MUST include in its filename the `hash
+value`__ of the file.  How would this help clients that use the TUF protocol to
 securely and consistently install or update a project from PyPI?
 
 __ https://en.wikipedia.org/wiki/Cryptographic_hash_function
 
-The first step in the TUF protocol requires the client to download the latest
+The first step of the TUF protocol requires the client to download the latest
 *timestamp* metadata.  However, the client would not know in advance the hash
 of the *timestamp* associated with the latest snapshot.  Therefore, PyPI MUST
 redirect all HTTP GET requests for *timestamp* to the *timestamp* referenced in
 the latest snapshot.  The *timestamp* role is the root of a tree of
-cryptographic hashes that points to every other metadata that is meant to exist
-together (i.e., clients request metadata in timestamp -> snapshot -> root ->
-targets order).  Clients are able to retrieve any file from this snapshot
+cryptographic hashes that points to every other metadata that is meant to be
+grouped together (i.e., clients request metadata in timestamp -> snapshot ->
+root -> targets order).  Clients are able to retrieve any file from a snapshot
 by deterministically including, in the request for the file, the hash of the
-file in the filename.  Assuming infinite disk space and no `hash collisions`__,
-a client may safely read from one snapshot while PyPI produces another
-snapshot.
+filename.  Assuming infinite disk space and no `hash collisions`__, a client
+may safely read from one snapshot while PyPI produces another snapshot.
 
 __ https://en.wikipedia.org/wiki/Collision_(computer_science)
 
