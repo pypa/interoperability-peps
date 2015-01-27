@@ -395,6 +395,208 @@ specifying `delegations`__.
 __ https://github.com/theupdateframework/tuf/tree/develop/tuf#delegations
 
 
+File Formats of the PyPI JSON Metadata
+--------------------------------------
+
+This section presents the format of the JSON metadata files.  Examples of the
+roles and their formats mentioned here are available for review in the
+"pep-0458-repository" subdirectory (alongside the "pep-0458.txt" PEP).
+
+
+root.JSON
+~~~~~~~~~
+
+The root.json file is signed by the root role's keys.  It indicates
+which keys are authorized for all top-level roles, including the root
+role itself.  Revocation and replacement of top-level role keys, including
+for the root role, is done by changing the keys listed for the roles in
+this file.
+
+The format of root.json is as follows:
+
+{
+  "_type" : "Root",
+  "version" : VERSION,
+  "expires" : EXPIRES,
+  "keys" : {
+    KEYID : KEY
+    , ... },
+  "roles" : {
+    ROLE : {
+      "keyids" : [ KEYID, ... ] ,
+      "threshold" : THRESHOLD },
+    ...
+  }
+}
+
+VERSION is an integer that is greater than 0.  Clients MUST NOT replace a
+metadata file with a version number less than the one currently trusted.
+
+EXPIRES determines when metadata should be considered expired and no longer
+trusted by clients.  Clients MUST NOT trust an expired file.
+
+A ROLE is one of "root", "snapshot", "targets", "timestamp", or "mirrors".
+A role for each of "root", "snapshot", "timestamp", and "targets" MUST be
+specified in the key list. The role of "mirror" is optional.  If not
+specified, the mirror list will not need to be signed if mirror lists are
+being used.
+
+The KEYID must be correct for the specified KEY.  Clients MUST calculate
+each KEYID to verify this is correct for the associated key.  Clients MUST
+ensure that for any KEYID represented in this key list and in other files,
+only one unique key has that KEYID.
+
+The THRESHOLD for a role is an integer of the number of keys of that role
+whose signatures are required in order to consider a file as being properly
+signed by that role.
+
+Metadata date-time data follows the ISO 8601 standard.  The expected format
+of the combined date and time string is "YYYY-MM-DDTHH:MM:SSZ".  Time is
+always in UTC, and the "Z" time zone designator is attached to indicate a
+zero UTC offset.  An example date-time string is "1985-10-21T01:21:00Z".
+
+
+snapshot.JSON
+~~~~~~~~~~~~~
+
+The snapshot.json file is signed by the snapshot role.  It lists hashes and
+sizes of all metadata on the repository, excluding timestamp.json and
+mirrors.json.
+
+The format of snapshot.json is as follows:
+
+{
+  "_type" : "Snapshot",
+  "version" : VERSION,
+  "expires" : EXPIRES,
+  "meta" : METAFILES
+}
+
+METAFILES is an object whose format is the following:
+
+{
+  METAPATH : {
+    "length" : LENGTH,
+    "hashes" : HASHES,
+    ("custom" : { ... }) },
+  ...
+}
+
+METAPATH is the the metadata file's path on the repository relative to the
+metadata base URL.
+
+
+targets.JSON and delegated target roles
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The targets.json metadata file lists the hashes and sizes of target files.
+Target files are the actual files that clients are intending to download (for
+example, the software updates they are trying to obtain).
+
+This file can optionally define other roles to which it delegates trust.
+Delegating trust means that the delegated role is trusted for some or all of
+the target files available from the repository. When delegated roles are
+specified, they are specified in a similar way to how the Root role specifies
+the top-level roles: the trusted keys and signature threshold for each role is
+given. Additionally, one or more patterns are specified which indicate the
+target file paths for which clients should trust each delegated role.
+
+
+The format of targets.json is as follows:
+
+{
+  "_type" : "Targets",
+  "version" : VERSION,
+  "expires" : EXPIRES,
+  "targets" : TARGETS,
+  ("delegations" : DELEGATIONS)
+}
+
+TARGETS is an object whose format is the following:
+
+{
+  TARGETPATH : {
+    "length" : LENGTH,
+    "hashes" : HASHES,
+    ("custom" : { ... }) },
+  ...
+}
+
+Each key of the TARGETS object is a TARGETPATH.  A TARGETPATH is a path to
+a file that is relative to a mirror's base URL of targets.
+
+It is allowed to have a TARGETS object with no TARGETPATH elements.  This can
+be used to indicate that no target files are available.
+
+The HASH and LENGTH are the hash and length of the target file. If defined, the
+elements and values of "custom" will be made available to the client
+application.  The information in "custom" is opaque to the framework and can
+include version numbers, dependencies, requirements, and any other data that
+the application wants to include to describe the file at TARGETPATH.  The
+application may use this information to guide download decisions.
+
+DELEGATIONS is an object whose format is the following:
+
+{
+  "keys" : {
+    KEYID : KEY,
+    ...
+  },
+  "roles" : [{
+    "name": ROLE,
+    "keyids" : [ KEYID, ... ] ,
+    "threshold" : THRESHOLD,
+    ("path_hash_prefixes" : [ HEX_DIGEST, ... ] |
+    "paths" : [ PATHPATTERN, ... ])},
+  ...
+  ]
+}
+
+In order to discuss target paths, a role MUST specify only one of the
+"path_hash_prefixes" or "paths" attributes, each of which we discuss next.
+
+The "path_hash_prefixes" list is used to succinctly describe a set of target
+paths. Specifically, each HEX_DIGEST in "path_hash_prefixes" describes a set of
+target paths; therefore, "path_hash_prefixes" is the union over each prefix of
+its set of target paths. The target paths must meet this condition: each target
+path, when hashed with the SHA-256 hash function to produce a 64-byte
+hexadecimal digest (HEX_DIGEST), must share the same prefix as one of the
+prefixes in "path_hash_prefixes". This is useful to split a large number of
+targets into separate bins identified by consistent hashing.
+
+The "paths" list describes paths that the role is trusted to provide.  Clients
+MUST check that a target is in one of the trusted paths of all roles in a
+delegation chain, not just in a trusted path of the role that describes the
+target file.  The format of a PATHPATTERN may be either a path to a single
+file, or a path to a directory to indicate all files and/or subdirectories
+under that directory.
+
+
+timestamp.JSON
+~~~~~~~~~~~~~~
+
+The timestamp file is signed by a timestamp key.  It indicates the
+latest versions of other files and is frequently resigned to limit the
+amount of time a client can be kept unaware of interference with obtaining
+updates.
+
+Timestamp files will potentially be downloaded very frequently.  Unnecessary
+information in them will be avoided.
+
+The format of the timestamp file is as follows:
+
+{
+  "_type" : "Timestamp",
+  "version" : VERSION,
+  "expires" : EXPIRES,
+  "meta" : METAFILES
+}
+
+METAFILES is the same is described for the snapshot.json file.  In the case of
+the timestamp.json file, this will commonly only include a description of the
+snapshot.json file.
+
+
 How to Establish Initial Trust in the PyPI Root Keys
 ----------------------------------------------------
 
@@ -505,7 +707,8 @@ signature algorithms allowed to sign the TUF metadata, however, the Ed25519
 signature scheme [25]_ SHOULD be used by PyPI administrators.
 
 Ed25519 is a public-key signature system that uses small cryptographic
-signatures and keys. A pure-Python implementation [27]_ of the Ed25519
+signatures and keys.  It is an elliptic curve digital signature algorithm based
+on Twisted Edwards curves.  A pure-Python implementation [27]_ of the Ed25519
 signature scheme is available, and verification of Ed25519 signatures is fast
 even when performed in Python.
 
@@ -530,6 +733,42 @@ PyCA Cryptography can be added in the future), may override the default number
 of PBKDF2 iterations, and the KDF tweaked to preference.  However, the exact
 cryptographic constructions can be adjusted to include future primitives added
 by the cryptographic libraries supported.
+
+
+Keys objects stored in encrypted key files and in metadata have the format:
+
+{ "keytype" : KEYTYPE,
+  "keyval" : KEYVAL
+}
+
+All keys have the format:
+
+{ "keytype" : KEYTYPE,
+"keyval" : KEYVAL }
+
+where KEYTYPE is a string describing the type of the key ("ed25519") and how
+it's used to sign documents.  The type determines the interpretation of KEYVAL.
+
+The 'ed25519' key format is:
+
+{ "keytype" : "ed25519",
+  "keyval" :
+    { "public" : PUBLIC,
+      "private" : PRIVATE
+    }
+}
+
+where PUBLIC and PRIVATE are both 32-byte strings.
+
+Metadata does not include the private portion of the key object:
+
+{ "keytype" : "ed25519",
+  "keyval" :
+    { "public" : PUBLIC}
+}
+
+The KEYID of a key is the hexdigest of the SHA-256 hash of the canonical JSON
+form of the key, where the "private" object key is excluded.
 
 
 Generating Cryptographic Keys and Signing Metadata
