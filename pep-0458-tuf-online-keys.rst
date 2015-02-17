@@ -877,7 +877,7 @@ If a threshold number of *root* keys have been compromised, then PyPI MUST take
 the steps taken when the *targets* role has been compromised.  All of the
 *root* keys must also be replaced.
 
-To replace a compromised *root* key or any other top-level role key, the *root*
+In order to replace a compromised *root* key or any other top-level role key, the *root*
 role signs a new *root.json* file that lists the updated trusted keys for the
 role. When replacing *root* keys, PyPI will sign the new *root.json* file with
 both the new and old root keys until all clients are known to have obtained the
