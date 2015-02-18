@@ -438,7 +438,7 @@ How to Establish Initial Trust in the PyPI Root Keys
 ----------------------------------------------------
 
 Package managers like pip need to ship a file named "root.json" with the
-installation files that users initially download. This includes information
+installation files that users initially download. This file includes information
 about the keys trusted for certain roles, as well as the root keys themselves.
 Any new version of "root.json" that clients may download are verified against
 the root keys that client's initially trust. If a root key is compromised, but
@@ -884,10 +884,10 @@ both the new and old root keys until all clients are known to have obtained the
 new *root.json* file (a safe assumption is that this will be a very long time
 or never).  Since *root.json* is only updated by clients that already trust a
 threshold number of the keys included in the new *root.json*, setting aside
-reserved off-pypi keys to sign *root.json* specifically for outdated clients is
+reserved off-pypi keys to sign *root.json* specifically for outdated clients is an
 option.  There is no risk posed by continuing to sign the *root.json* file with
-revoked keys as once clients have updated they no longer trust the revoked key.
-This is only to ensure outdated clients remain able to update. 
+revoked keys because once clients have updated they no longer trust the revoked key.
+This is only to ensure that outdated clients remain able to update. 
 
 It is also RECOMMENDED that PyPI sufficiently document compromises with
 security bulletins.  These security bulletins will be most informative when
