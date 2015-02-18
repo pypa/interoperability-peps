@@ -342,7 +342,7 @@ Roles with different capabilities are used by TUF to compartmentalize trust.
 Metadata on the repository includes information about which keys are valid, the
 cryptographic hashes of packages and metadata, and the timeliness of available
 repository updates. Different roles sign for each type of metadata so that an
-attacker acquiring the key that specifies timeliness (which is kept on PyPI
+attacker acquiring the key that specifies timeliness (which is kept on the PyPI
 infrastructure) does not also gain access to the key that signs for the trusted
 hashes of packages, or to the key that signs for the trusted repository keys.
 Utilizing multiple roles allows TUF to delegate responsibilities and minimize
@@ -468,7 +468,7 @@ verification of PyPI distributions that are signed with private cryptographic
 keys stored on PyPI.  Distributions uploaded by developers are signed by PyPI
 and immediately available for download.  A possible future extension to this
 PEP, discussed in Appendix B, proposes the maximum security model and allows a
-developer to sign for his/her project.  Developer keys are not stored on PyPI
+developer to sign for his/her project.  Developer keys are not stored on the PyPI
 infrastructure: therefore, projects are safe from PyPI compromises.
 
 The minimum security model requires no action from a developer and protects
@@ -512,8 +512,8 @@ if the *pypi-signed* role itself signed for about 220K PyPI targets (which are
 simple indices and distributions).  This PEP does not delve into the details,
 but TUF features a so-called "`lazy bin walk`__" scheme that splits a large
 *targets* metadata file into many small ones (bins).  Targets are then
-referenced in these smaller bins, and which bin a target should go is based on
-the hash value of the target's file name.  For example, a target's file name
+referenced in these smaller bins, and which bin a target should go in is based
+on the hash value of the target's file name.  For example, a target's file name
 whose hash value starts with *7F* is referenced in the
 *targets/pypi-signed/00-7F* role (i.e., this role references all targets whose
 hash value prefix falls between 00 and 7F).  The *lazy bin walk* scheme allows
@@ -874,7 +874,7 @@ been compromised, then PyPI MUST take the following steps:
 
 3. All targets of the *pypi-signed* roles SHOULD be compared with the last
    known good consistent snapshot where none of the *timestamp*, *snapshot*, or
-   *pypi-signed* keys were known to have been compromised.  Added, updated or
+   *pypi-signed* keys were known to have been compromised.  Added, updated, or
    deleted targets in the compromised consistent snapshot that do not match the
    last known good consistent snapshot MAY be restored to their previous
    versions.  After ensuring the integrity of all *pypi-signed* targets, the
@@ -1073,7 +1073,7 @@ strength of this model (over the minimum security model) is in the off-pypi
 keys provided by developers.  Although the minimum security model supports
 continuous delivery, all of the projects are signed by an on-pypi key.  An
 attacker can corrupt packages in the minimum security model, but not in the
-maximum model without also compromising a developer's key.
+maximum model, without also compromising a developer's key.
 
 .. image:: pep-0458-4.png
 
