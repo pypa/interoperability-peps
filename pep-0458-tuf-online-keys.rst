@@ -116,8 +116,8 @@ The threat model assumes the following:
 
 * Keys not kept on PyPI infrastructure are safe and securely stored.
 
-* Attackers can compromise at least one of PyPI's trusted keys stored on PyPI
-  infrastructure, and may do so at once or over a period of time.
+* Attackers can compromise at least one of PyPI's trusted keys stored on the
+  PyPI infrastructure, and may do so at once or over a period of time.
 
 * Attackers can respond to client requests.
 
@@ -511,7 +511,7 @@ grow correspondingly.  For example, consider the *pypi-signed* role.  In August
 if the *pypi-signed* role itself signed for about 220K PyPI targets (which are
 simple indices and distributions).  This PEP does not delve into the details,
 but TUF features a so-called "`lazy bin walk`__" scheme that splits a large
-targets' metadata file into many small ones (bins).  Targets are then
+*targets* metadata file into many small ones (bins).  Targets are then
 referenced in these smaller bins, and which bin a target should go is based on
 the hash value of the target's file name.  For example, a target's file name
 whose hash value starts with *7F* is referenced in the
@@ -565,9 +565,9 @@ The *timestamp*, *snapshot*, and *pypi-signed* roles require continuous
 delivery.  Even though their respective keys MUST be on-pypi, this PEP requires
 that the keys be independent of each other.  Different keys for pypi-signed
 roles allow for each of the keys to be placed on separate servers if need be,
-and prevents side channel attacks that compromise one key from automatically
-compromising the rest of the keys.  Therefore, each of the *timestamp*,
-*snapshot*, and *pypi-signed* roles MUST require (1, 1) keys.
+and prevents the compromise of one key from automatically compromising the rest
+of the keys.  Therefore, each of the *timestamp*, *snapshot*, and *pypi-signed*
+roles MUST require (1, 1) keys.
 
 The *pypi-signed* role MAY delegate targets in an automated manner to a number
 of roles called "bins", as discussed in the previous section.  Each of the
@@ -604,7 +604,8 @@ On-pypi and off-pypi Keys Recommended for Each Role
 -------------------------------------------------
 
 In order to support continuous delivery, the *timestamp*, *snapshot*,
-*pypi-signed* role keys MUST be stored on PyPI infrastructure (on-pypi keys).
+*pypi-signed* role keys MUST be stored on the PyPI infrastructure (on-pypi
+keys).
 
 As explained in the previous section, the *root* and *targets* role keys MUST
 be off-pypi for maximum security: these keys will be off-pypi in the sense that
