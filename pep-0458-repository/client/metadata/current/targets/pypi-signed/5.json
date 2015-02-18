@@ -1,0 +1,26 @@
+{
+ "signatures": [
+  {
+   "keyid": "494e4ec5a9aa8286a0320a8edc242dc180a35670ec70bca5c4223502bb991a36",
+   "method": "ed25519",
+   "sig": "78774575226f941109d07bab465ac106ff14941983ae03623a8c2b15095c0743ec90d1c6caa3862a9316e0eae3231f9df9e74cd45ef986c064b84e1757aa4c0a"
+  }
+ ],
+ "signed": {
+  "_type": "Targets",
+  "delegations": {
+   "keys": {},
+   "roles": []
+  },
+  "expires": "2015-04-11T06:03:29Z",
+  "targets": {
+   "/packages/numpy/numpy-1.9.1-cp34-cp34m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl": {
+    "hashes": {
+     "sha256": "388958ee6b759d7b1739efef7ac6578e425e28cd783f0da52808debe27547d8b"
+    },
+    "length": 3579338
+   }
+  },
+  "version": 1
+ }
+}

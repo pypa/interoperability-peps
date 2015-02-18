@@ -1,0 +1,38 @@
+{
+ "signatures": [
+  {
+   "keyid": "18b3285216e282cf9c08f75d4aa35e8f9387e169f3cb72c2e414bd6e6cad582e",
+   "method": "ed25519",
+   "sig": "3f20203510b558d01b50f27db53724b220b92b89966c960c7307812fb0090b539a6cbc1998cbfef2d023f170e9744cdfd2b0ac09e0a99e8d62d12751d39ede05"
+  }
+ ],
+ "signed": {
+  "_type": "Targets",
+  "delegations": {
+   "keys": {
+    "494e4ec5a9aa8286a0320a8edc242dc180a35670ec70bca5c4223502bb991a36": {
+     "keytype": "ed25519",
+     "keyval": {
+      "public": "3fa12430f1edf19e9a261ea9bca8c0310cf4311e67b2820e62a419e481ac0415"
+     }
+    }
+   },
+   "roles": [
+    {
+     "backtrack": true,
+     "keyids": [
+      "494e4ec5a9aa8286a0320a8edc242dc180a35670ec70bca5c4223502bb991a36"
+     ],
+     "name": "targets/pypi-signed",
+     "paths": [
+      "/packages/"
+     ],
+     "threshold": 1
+    }
+   ]
+  },
+  "expires": "2015-04-11T06:03:22Z",
+  "targets": {},
+  "version": 1
+ }
+}
