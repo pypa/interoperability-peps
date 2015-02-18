@@ -435,20 +435,220 @@ specifying `delegations`__.
 __ https://github.com/theupdateframework/tuf/tree/develop/tuf#delegations
 
 
+File Formats of the PyPI JSON Metadata
+--------------------------------------
+
+This section presents the format of the JSON metadata files.  Examples of the
+roles and their formats are available for review in the "pep-0458-repository"
+subdirectory (alongside the "pep-0458.txt" PEP).
+
+
+root.JSON
+~~~~~~~~~
+
+The root.json file is signed by the *root* role's keys.  It indicates which
+keys are authorized for the top-level roles, including the root role itself.
+To revoke any of the top-level role keys, the keys listed in root.json may be
+replaced.
+
+The format of root.json is as follows:
+
+{
+  "_type" : "Root",
+  "version" : VERSION,
+  "expires" : EXPIRES,
+  "keys" : {
+    KEYID : KEY
+    , ... },
+  "roles" : {
+    ROLE : {
+      "keyids" : [ KEYID, ... ] ,
+      "threshold" : THRESHOLD },
+    ...
+  }
+}
+
+VERSION is an integer that is greater than 0.  Clients MUST NOT replace a
+metadata file with a version number less than the one currently trusted.
+
+EXPIRES determines when metadata should be considered expired and no longer
+trusted by clients.  Clients MUST NOT trust an expired file.
+
+A ROLE may be "root", "snapshot", "targets", "timestamp", or "mirrors".  A role
+for each of "root", "snapshot", "timestamp", and "targets" MUST be specified in
+the key list. The role of "mirror" is optional.  If not specified, the mirror
+list will not need to be signed even if mirror lists are being used.
+
+The KEYID must be correct for the specified KEY.  Clients MUST calculate each
+KEYID to verify this is correct for the associated key.  Clients MUST ensure
+that for any KEYID represented in this key list and in other files, only one
+unique key has that KEYID.
+
+The THRESHOLD for a role is an integer of the number of keys of that role whose
+signatures are required in order to consider a file as being properly signed by
+that role.
+
+Metadata date-time data follows the ISO 8601 standard.  The expected format of
+the combined date and time string is "YYYY-MM-DDTHH:MM:SSZ".  Time is always in
+UTC, and the "Z" time zone designator is attached to indicate a zero UTC
+offset.  An example date-time string is "1985-10-21T01:21:00Z".
+
+
+snapshot.JSON
+~~~~~~~~~~~~~
+
+The snapshot.json file is signed by the snapshot role.  It lists hashes and
+sizes of all metadata on the repository, excluding timestamp.json and
+mirrors.json.
+
+The format of snapshot.json is as follows:
+
+{
+  "_type" : "Snapshot",
+  "version" : VERSION,
+  "expires" : EXPIRES,
+  "meta" : METAFILES
+}
+
+METAFILES is an object whose format is the following:
+
+{
+  METAPATH : {
+    "length" : LENGTH,
+    "hashes" : HASHES,
+    ("custom" : { ... }) },
+  ...
+}
+
+METAPATH is the metadata file's path on the repository relative to the
+metadata base URL.
+
+
+targets.JSON and delegated target roles
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The targets.json metadata file lists the hashes and sizes of target files.
+Target files are the actual files that clients are intending to download (for
+example, the software updates they are trying to obtain).
+
+This file can optionally define other roles to which it delegates trust.
+Delegating trust means that the delegated role is trusted for some or all of
+the target files available from the repository. When delegated roles are
+specified, it is done similar to how the Root role specifies the top-level
+roles: the trusted keys and signature threshold for each role is given.
+Additionally, one or more patterns are specified that indicate the target file
+paths for which clients should trust each delegated role.
+
+
+The format of targets.json is as follows:
+
+{
+  "_type" : "Targets",
+  "version" : VERSION,
+  "expires" : EXPIRES,
+  "targets" : TARGETS,
+  ("delegations" : DELEGATIONS)
+}
+
+TARGETS is an object whose format is the following:
+
+{
+  TARGETPATH : {
+    "length" : LENGTH,
+    "hashes" : HASHES,
+    ("custom" : { ... }) },
+  ...
+}
+
+Each key of the TARGETS object is a TARGETPATH.  A TARGETPATH is a path to
+a file that is relative to a mirror's base URL of targets.
+
+It is allowed to have a TARGETS object with no TARGETPATH elements.  This can
+be used to indicate that no target files are available.
+
+The HASH and LENGTH are the hash and length of the target file. If defined, the
+elements and values of "custom" will be made available to the client
+application.  The information in "custom" is opaque to the framework and can
+include version numbers, dependencies, requirements, and any other data that
+the application wants to include to describe the file at TARGETPATH.  The
+application may use this information to guide download decisions.
+
+DELEGATIONS is an object whose format is the following:
+
+{
+  "keys" : {
+    KEYID : KEY,
+    ...
+  },
+  "roles" : [{
+    "name": ROLE,
+    "keyids" : [ KEYID, ... ] ,
+    "threshold" : THRESHOLD,
+    ("path_hash_prefixes" : [ HEX_DIGEST, ... ] |
+    "paths" : [ PATHPATTERN, ... ])},
+  ...
+  ]
+}
+
+In order to discuss target paths, a role MUST specify only one of the
+"path_hash_prefixes" or "paths" attributes, each of which we discuss next.
+
+The "path_hash_prefixes" list is used to succinctly describe a set of target
+paths. Specifically, each HEX_DIGEST in "path_hash_prefixes" describes a set of
+target paths.  The target paths must meet this condition: each target path,
+when hashed with the SHA-256 hash function to produce a 64-byte hexadecimal
+digest (HEX_DIGEST), must share the same prefix as one of the prefixes in
+"path_hash_prefixes". This is useful to split a large number of targets into
+separate bins identified by consistent hashing.
+
+The "paths" list describes paths that the role is trusted to provide.  Clients
+MUST check that a target is in one of the trusted paths of all roles in a
+delegation chain, not just in a trusted path of the role that describes the
+target file.  The format of a PATHPATTERN may be either a path to a single
+file, or a path to a directory to indicate all files and/or subdirectories
+under that directory.
+
+
+timestamp.JSON
+~~~~~~~~~~~~~~
+
+The timestamp file is signed by a timestamp key.  It indicates the
+latest versions of other files and is frequently resigned to limit the
+amount of time a client can be kept unaware of interference with obtaining
+updates.
+
+Timestamp files will potentially be downloaded very frequently.  Unnecessary
+information in them will be avoided.
+
+The format of the timestamp file is as follows:
+
+{
+  "_type" : "Timestamp",
+  "version" : VERSION,
+  "expires" : EXPIRES,
+  "meta" : METAFILES
+}
+
+METAFILES has the same format as the "meta" object of the snapshot.json file.
+In the case of the timestamp.json file, this will commonly include only a
+description of the snapshot.json file.
+
+
 How to Establish Initial Trust in the PyPI Root Keys
 ----------------------------------------------------
 
 Package managers like pip need to ship a file named "root.json" with the
-installation files that users initially download. This file includes information
-about the keys trusted for certain roles, as well as the root keys themselves.
-Any new version of "root.json" that clients may download are verified against
-the root keys that client's initially trust. If a root key is compromised, but
-a threshold of keys are still secured, the PyPI administrator MUST push a new
-release that revokes trust in the compromised keys. If a threshold of root keys
-are compromised, then "root.json" should be updated out-of-band, however the
-threshold should be chosen so that this is extremely unlikely. The TUF client
-library does not require manual intervention if root keys are revoked or added:
-the update process handles the cases where "root.json" has changed.
+installation files that users initially download. This file includes
+information about the keys trusted for certain roles, as well as the root keys
+themselves.  Any new version of "root.json" that clients may download are
+verified against the root keys that client's initially trust. If a root key is
+compromised, but a threshold of keys are still secured, the PyPI administrator
+MUST push a new release that revokes trust in the compromised keys. If a
+threshold of root keys are compromised, then "root.json" should be updated
+out-of-band, however the threshold should be chosen so that this is extremely
+unlikely. The TUF client library does not require manual intervention if root
+keys are revoked or added: the update process handles the cases where
+"root.json" has changed.
 
 To bundle the software, "root.json" MUST be included in the version of pip
 shipped with CPython (via ensurepip). The TUF client library then loads the
@@ -546,16 +746,143 @@ metadata SHOULD also be made available to clients.
 PyPI and Key Requirements
 =========================
 
-In this section, the kinds of keys required to sign for TUF roles on PyPI are
-examined.  TUF is agnostic with respect to choices of digital signature
-algorithms.  For the purpose of discussion, it is assumed that most digital
-signatures will be produced with the well-tested and tried RSA algorithm [20]_.
-Nevertheless, we do NOT recommend any particular digital signature algorithm in
-this PEP because there are a few important constraints: first, cryptography
-changes over time; second, package managers such as pip may wish to perform
-signature verification in Python, without resorting to a compiled C library, in
-order to be able to run on as many systems as Python supports; and third, TUF
-recommends diversity of keys for certain applications.
+The number of keys, and key type, required to sign the TUF metadata are
+discussed in this section.  TUF is agnostic with respect to the digital
+signature algorithms allowed to sign the TUF metadata, however, the Ed25519
+signature scheme [25]_ SHOULD be used by PyPI administrators.
+
+Ed25519 is a public-key signature system that uses small cryptographic
+signatures and keys.  It is an elliptic curve digital signature algorithm based
+on Twisted Edwards curves.  A pure-Python implementation [27]_ of the Ed25519
+signature scheme is available, and verification of Ed25519 signatures is fast
+even when performed in Python.
+
+The package manager (pip) shipped with CPython MUST work on non-CPython
+interpreters and cannot have dependencies that have to be compiled (i.e., the
+PyPI + TUF integration MUST NOT require compilation of C extensions in order to
+verify cryptographic signatures). Verification of signatures MUST be done in
+Python, and verifying RSA [20]_ signatures in pure-Python may be impractical
+due to speed. Therefore, PyPI SHOULD use the Ed25519 signature scheme.
+
+
+Cryptographic Key Files
+-----------------------
+
+Cryptographic keys MAY be stored in password-protected, encrypted key files.
+Administrators MAY use the repository tool to encrypt key files with
+AES-256-CTR-Mode and strengthen passwords with PBKDF2-HMAC-SHA256 (100K
+iterations by default, but this may be overridden by the developer). The
+current Python implementation of TUF can use any cryptographic library
+(PyCrypto [24]_ is currently used to encrypt the TUF key files, but support for
+PyCA Cryptography can be added in the future), may override the default number
+of PBKDF2 iterations, and the KDF may be tweaked to preference.  However, the
+exact cryptographic constructions can be adjusted to include future primitives
+added to the cryptographic libraries supported by framework.
+
+
+Key objects stored in encrypted key files and in metadata have the format:
+
+{ "keytype" : KEYTYPE,
+  "keyval" : KEYVAL
+}
+
+All keys have the format:
+
+{ "keytype" : KEYTYPE,
+"keyval" : KEYVAL }
+
+where KEYTYPE is a string describing the type of the key ("ed25519") and how
+it's used to sign documents.  The type determines the interpretation of KEYVAL.
+
+The 'ed25519' key format is:
+
+{ "keytype" : "ed25519",
+  "keyval" :
+    { "public" : PUBLIC,
+      "private" : PRIVATE
+    }
+}
+
+where PUBLIC and PRIVATE are both 32-byte strings.
+
+Metadata does not include the private portion of the key object:
+
+{ "keytype" : "ed25519",
+  "keyval" :
+    { "public" : PUBLIC}
+}
+
+The KEYID of a key is the hexdigest of the SHA-256 hash of the canonical JSON
+form of the key, where the "private" object key is excluded.
+
+
+Generating Cryptographic Keys and Signing Metadata
+--------------------------------------------------
+
+The repository management tool may be used to generate the cryptographic keys
+and sign the PyPI metadata downloaded by end users.  The following Python code
+demonstrates how to generate and import cryptographic keys with the repository
+management tool:
+
+.. code-block::
+
+  >>> from tuf.repository_tool import *
+
+  # Generate and write an ed25519 key pair.  The private key is encrypted
+  # before it is saved.  A 'password' argument may be supplied, otherwise a
+  # prompt is presented.
+  >>> generate_and_write_ed25519_keypair('/path/to/ed25519_key')
+  Enter a password for the ED25519 key: 
+  Confirm:
+
+  # Import the ed25519 public key just created . . .
+  >>> public_ed25519_key = import_ed25519_publickey_from_file('/path/to/ed25519_key.pub')
+
+  # and its corresponding private key.
+  >>> private_ed25519_key = import_ed25519_privatekey_from_file('/path/to/ed25519_key')
+  Enter a password for the encrypted ED25519 key: 
+
+
+The repository tool can use the imported cryptographic keys to sign particular
+roles.  In the code sample that follows, an 'on-pypi' key is loaded for the
+*snapshot* role and the signed *snapshot* metadata file written to disk with
+**repository.write()**:
+
+.. code-block::
+  
+  repository.snapshot.load_signing_key(import_ed25519_privatekey_from_file("keystore/snapshot", password='pw'))
+  repository.write()
+
+
+How are signatures generated?
+-----------------------------
+
+Using the Ed25519 signature scheme, the "signed" dictionary entry of JSON
+metadata is transformed to its `canonical JSON`__ form to produce repeatable
+signatures and hashes.  The generated Ed25519 signature is appended to the
+"signatures" entry of JSON metadata.
+
+__ http://wiki.laptop.org/go/Canonical_JSON
+
+
+Signed JSON metadata has the following format:
+
+{
+  "signed" : ROLE,
+  "signatures" : [
+    { "keyid" : KEYID,
+      "method" : METHOD,
+      "sig" : SIGNATURE,
+    },
+    ...
+  ]
+}
+
+ROLE is a dictionary whose "_type" field describes the role type.  KEYID is the
+identifier (64-byte hexstring) of the key that signs the ROLE dictionary.
+METHOD is the key signing method used to generate the signature.  Specifically,
+the string: "ed25519".  SIGNATURE is an Ed25519 signature (128-byte hexstring)
+of the canonical JSON form of ROLE.
 
 
 Number Of Keys Recommended
@@ -620,19 +947,19 @@ Project developers expect the distributions they upload to PyPI to be
 immediately available for download.  Unfortunately, there will be problems when
 many readers and writers simultaneously access the same metadata and
 distributions.  That is, there needs to be a way to ensure consistency of
-metadata and repository files when multiple developers simulaneously change the
-same metadata or distributions.  There are also issues with consistency on PyPI
-without TUF, but the problem is more severe with signed metadata that MUST keep
-track of the files available on PyPI in real-time.
+metadata and repository files when multiple developers simultaneously update
+the same metadata or distributions.  Without TUF, there are also issues with
+consistency on PyPI, but the problem is more severe with signed metadata that
+MUST keep track, in real-time, of the files available on PyPI.
 
-Suppose that PyPI generates a *snapshot*, which indicates the latest version of
-every metadata except *timestamp*, at version 1 and a client requests this
-*snapshot* from PyPI.  While the client is busy downloading this *snapshot*,
-PyPI then timestamps a new snapshot at, say, version 2.  Without ensuring
-consistency of metadata, the client would find itself with a copy of *snapshot*
-that disagrees with what is available on PyPI, which is indistinguishable from
-arbitrary metadata injected by an attacker.  The problem would also occur for
-mirrors attempting to sync with PyPI.
+Suppose that PyPI generates a *snapshot*, which describes the latest version of
+every metadata (except *timestamp*), at specified version 1, and that a client
+requests this *snapshot* from PyPI.  While the client is busy downloading this
+*snapshot*, PyPI timestamps a new snapshot at, say, version 2.  Without
+ensuring consistency of metadata, the client would find itself with a copy of
+*snapshot* that is inconsistent with what is available on PyPI: this situation
+is indistinguishable from arbitrary metadata injected by an attacker.  The
+problem would also occur with mirrors that attempt to sync with PyPI.
 
 
 Consistent Snapshots
@@ -640,31 +967,30 @@ Consistent Snapshots
 
 There are problems with consistency on PyPI with or without TUF.  TUF requires
 that its metadata be consistent with the repository files, but how would the
-metadata be kept consistent with projects that change all the time?  As a
-result, this proposal MUST address the problem of producing a consistent
-snapshot that captures the state of all known projects at a given time.  Each
-snapshot should safely coexist with any other snapshot, and be able to be
-deleted independently, without affecting any other snapshot.
+metadata be kept consistent for projects that change all the time?  This
+proposal addresses the problem of producing a consistent snapshot that captures
+the state of all known projects at a given time.  Each snapshot should safely
+coexist with any other snapshot, and be able to be deleted independently,
+without affecting any other snapshot.
 
-The solution presented in this PEP is that every metadata or data file managed
-by PyPI and written to disk MUST include in its filename the `cryptographic
-hash`__ of the file.  How would this help clients that use the TUF protocol to
+The strategy or method presented in this PEP is that every metadata or data
+file managed by PyPI and written to disk MUST include in its filename the `hash
+value`__ of the file.  How would this help clients that use the TUF protocol to
 securely and consistently install or update a project from PyPI?
 
 __ https://en.wikipedia.org/wiki/Cryptographic_hash_function
 
-The first step in the TUF protocol requires the client to download the latest
+The first step of the TUF protocol requires the client to download the latest
 *timestamp* metadata.  However, the client would not know in advance the hash
 of the *timestamp* associated with the latest snapshot.  Therefore, PyPI MUST
 redirect all HTTP GET requests for *timestamp* to the *timestamp* referenced in
 the latest snapshot.  The *timestamp* role is the root of a tree of
-cryptographic hashes that points to every other metadata that is meant to exist
-together (i.e., clients request metadata in timestamp -> snapshot -> root ->
-targets order).  Clients are able to retrieve any file from this snapshot
+cryptographic hashes that points to every other metadata that is meant to be
+grouped together (i.e., clients request metadata in timestamp -> snapshot ->
+root -> targets order).  Clients are able to retrieve any file from a snapshot
 by deterministically including, in the request for the file, the hash of the
-file in the filename.  Assuming infinite disk space and no `hash collisions`__,
-a client may safely read from one snapshot while PyPI produces another
-snapshot.
+filename.  Assuming infinite disk space and no `hash collisions`__, a client
+may safely read from one snapshot while PyPI produces another snapshot.
 
 __ https://en.wikipedia.org/wiki/Collision_(computer_science)
 
@@ -892,17 +1218,18 @@ If a threshold number of *root* keys have been compromised, then PyPI MUST take
 the steps taken when the *targets* role has been compromised.  All of the
 *root* keys must also be replaced.
 
-In order to replace a compromised *root* key or any other top-level role key, the *root*
-role signs a new *root.json* file that lists the updated trusted keys for the
-role. When replacing *root* keys, PyPI will sign the new *root.json* file with
-both the new and old root keys until all clients are known to have obtained the
-new *root.json* file (a safe assumption is that this will be a very long time
-or never).  Since *root.json* is only updated by clients that already trust a
-threshold number of the keys included in the new *root.json*, setting aside
-reserved off-pypi keys to sign *root.json* specifically for outdated clients is an
-option.  There is no risk posed by continuing to sign the *root.json* file with
-revoked keys because once clients have updated they no longer trust the revoked key.
-This is only to ensure that outdated clients remain able to update. 
+In order to replace a compromised *root* key or any other top-level role key,
+the *root* role signs a new *root.json* file that lists the updated trusted
+keys for the role. When replacing *root* keys, PyPI will sign the new
+*root.json* file with both the new and old root keys until all clients are
+known to have obtained the new *root.json* file (a safe assumption is that this
+will be a very long time or never).  Since *root.json* is only updated by
+clients that already trust a threshold number of the keys included in the new
+*root.json*, setting aside reserved off-pypi keys to sign *root.json*
+specifically for outdated clients is an option.  There is no risk posed by
+continuing to sign the *root.json* file with revoked keys because once clients
+have updated they no longer trust the revoked key.  This is only to ensure that
+outdated clients remain able to update. 
 
 It is also RECOMMENDED that PyPI sufficiently document compromises with
 security bulletins.  These security bulletins will be most informative when
@@ -1181,6 +1508,7 @@ References
 .. [24] https://pypi.python.org/pypi/pycrypto
 .. [25] http://ed25519.cr.yp.to/
 .. [26] https://www.python.org/dev/peps/pep-0480/
+.. [27] https://github.com/pyca/ed25519
 
 
 Acknowledgements
