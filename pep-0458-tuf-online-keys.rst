@@ -439,18 +439,17 @@ File Formats of the PyPI JSON Metadata
 --------------------------------------
 
 This section presents the format of the JSON metadata files.  Examples of the
-roles and their formats mentioned here are available for review in the
-"pep-0458-repository" subdirectory (alongside the "pep-0458.txt" PEP).
+roles and their formats are available for review in the "pep-0458-repository"
+subdirectory (alongside the "pep-0458.txt" PEP).
 
 
 root.JSON
 ~~~~~~~~~
 
-The root.json file is signed by the root role's keys.  It indicates
-which keys are authorized for all top-level roles, including the root
-role itself.  Revocation and replacement of top-level role keys, including
-for the root role, is done by changing the keys listed for the roles in
-this file.
+The root.json file is signed by the *root* role's keys.  It indicates which
+keys are authorized for the top-level roles, including the root role itself.
+To revoke any of the top-level role keys, the keys listed in root.json may be
+replaced.
 
 The format of root.json is as follows:
 
@@ -475,25 +474,24 @@ metadata file with a version number less than the one currently trusted.
 EXPIRES determines when metadata should be considered expired and no longer
 trusted by clients.  Clients MUST NOT trust an expired file.
 
-A ROLE is one of "root", "snapshot", "targets", "timestamp", or "mirrors".
-A role for each of "root", "snapshot", "timestamp", and "targets" MUST be
-specified in the key list. The role of "mirror" is optional.  If not
-specified, the mirror list will not need to be signed if mirror lists are
-being used.
+A ROLE may be "root", "snapshot", "targets", "timestamp", or "mirrors".  A role
+for each of "root", "snapshot", "timestamp", and "targets" MUST be specified in
+the key list. The role of "mirror" is optional.  If not specified, the mirror
+list will not need to be signed even if mirror lists are being used.
 
-The KEYID must be correct for the specified KEY.  Clients MUST calculate
-each KEYID to verify this is correct for the associated key.  Clients MUST
-ensure that for any KEYID represented in this key list and in other files,
-only one unique key has that KEYID.
+The KEYID must be correct for the specified KEY.  Clients MUST calculate each
+KEYID to verify this is correct for the associated key.  Clients MUST ensure
+that for any KEYID represented in this key list and in other files, only one
+unique key has that KEYID.
 
-The THRESHOLD for a role is an integer of the number of keys of that role
-whose signatures are required in order to consider a file as being properly
-signed by that role.
+The THRESHOLD for a role is an integer of the number of keys of that role whose
+signatures are required in order to consider a file as being properly signed by
+that role.
 
-Metadata date-time data follows the ISO 8601 standard.  The expected format
-of the combined date and time string is "YYYY-MM-DDTHH:MM:SSZ".  Time is
-always in UTC, and the "Z" time zone designator is attached to indicate a
-zero UTC offset.  An example date-time string is "1985-10-21T01:21:00Z".
+Metadata date-time data follows the ISO 8601 standard.  The expected format of
+the combined date and time string is "YYYY-MM-DDTHH:MM:SSZ".  Time is always in
+UTC, and the "Z" time zone designator is attached to indicate a zero UTC
+offset.  An example date-time string is "1985-10-21T01:21:00Z".
 
 
 snapshot.JSON
@@ -536,10 +534,10 @@ example, the software updates they are trying to obtain).
 This file can optionally define other roles to which it delegates trust.
 Delegating trust means that the delegated role is trusted for some or all of
 the target files available from the repository. When delegated roles are
-specified, they are specified in a similar way to how the Root role specifies
-the top-level roles: the trusted keys and signature threshold for each role is
-given. Additionally, one or more patterns are specified that indicate the
-target file paths for which clients should trust each delegated role.
+specified, it is done similar to how the Root role specifies the top-level
+roles: the trusted keys and signature threshold for each role is given.
+Additionally, one or more patterns are specified that indicate the target file
+paths for which clients should trust each delegated role.
 
 
 The format of targets.json is as follows:
@@ -597,12 +595,11 @@ In order to discuss target paths, a role MUST specify only one of the
 
 The "path_hash_prefixes" list is used to succinctly describe a set of target
 paths. Specifically, each HEX_DIGEST in "path_hash_prefixes" describes a set of
-target paths; therefore, "path_hash_prefixes" is the union over each prefix of
-its set of target paths. The target paths must meet this condition: each target
-path, when hashed with the SHA-256 hash function to produce a 64-byte
-hexadecimal digest (HEX_DIGEST), must share the same prefix as one of the
-prefixes in "path_hash_prefixes". This is useful to split a large number of
-targets into separate bins identified by consistent hashing.
+target paths.  The target paths must meet this condition: each target path,
+when hashed with the SHA-256 hash function to produce a 64-byte hexadecimal
+digest (HEX_DIGEST), must share the same prefix as one of the prefixes in
+"path_hash_prefixes". This is useful to split a large number of targets into
+separate bins identified by consistent hashing.
 
 The "paths" list describes paths that the role is trusted to provide.  Clients
 MUST check that a target is in one of the trusted paths of all roles in a
@@ -632,9 +629,9 @@ The format of the timestamp file is as follows:
   "meta" : METAFILES
 }
 
-METAFILES is the same is described for the snapshot.json file.  In the case of
-the timestamp.json file, this will commonly only include a description of the
-snapshot.json file.
+METAFILES has the same format as the "meta" object of the snapshot.json file.
+In the case of the timestamp.json file, this will commonly include only a
+description of the snapshot.json file.
 
 
 How to Establish Initial Trust in the PyPI Root Keys
@@ -778,12 +775,12 @@ iterations by default, but this may be overridden by the developer). The
 current Python implementation of TUF can use any cryptographic library
 (PyCrypto [24]_ is currently used to encrypt the TUF key files, but support for
 PyCA Cryptography can be added in the future), may override the default number
-of PBKDF2 iterations, and the KDF may be tweaked to preference.  However, the exact
-cryptographic constructions can be adjusted to include future primitives added
-by the cryptographic libraries supported.
+of PBKDF2 iterations, and the KDF may be tweaked to preference.  However, the
+exact cryptographic constructions can be adjusted to include future primitives
+added to the cryptographic libraries supported by framework.
 
 
-Keys objects stored in encrypted key files and in metadata have the format:
+Key objects stored in encrypted key files and in metadata have the format:
 
 { "keytype" : KEYTYPE,
   "keyval" : KEYVAL
@@ -831,8 +828,9 @@ management tool:
 
   >>> from tuf.repository_tool import *
 
-  # Generate and write an ed25519 key pair.  The private key is saved encrypted.
-  # A 'password' argument may be supplied, otherwise a prompt is presented.
+  # Generate and write an ed25519 key pair.  The private key is encrypted
+  # before it is saved.  A 'password' argument may be supplied, otherwise a
+  # prompt is presented.
   >>> generate_and_write_ed25519_keypair('/path/to/ed25519_key')
   Enter a password for the ED25519 key: 
   Confirm:
@@ -845,10 +843,10 @@ management tool:
   Enter a password for the encrypted ED25519 key: 
 
 
-The repository tool can use the cryptographic keys that are imported to sign
-particular roles.  In the code sample that follows, an 'on-pypi' key is loaded
-for the *snapshot* role and the signed *snapshot* metadata file written to
-disk with **repository.write()**:
+The repository tool can use the imported cryptographic keys to sign particular
+roles.  In the code sample that follows, an 'on-pypi' key is loaded for the
+*snapshot* role and the signed *snapshot* metadata file written to disk with
+**repository.write()**:
 
 .. code-block::
   
@@ -880,12 +878,11 @@ Signed JSON metadata has the following format:
   ]
 }
 
-ROLE is a dictionary whose "_type" field describes the role type.
-KEYID is the identifier (64-byte hexstring) of the key signing the ROLE dictionary.
+ROLE is a dictionary whose "_type" field describes the role type.  KEYID is the
+identifier (64-byte hexstring) of the key that signs the ROLE dictionary.
 METHOD is the key signing method used to generate the signature.  Specifically,
-the string: "ed25519".
-SIGNATURE is an Ed25519 signature (<128-byte hexstring) of the canonical JSON
-form of ROLE.
+the string: "ed25519".  SIGNATURE is an Ed25519 signature (128-byte hexstring)
+of the canonical JSON form of ROLE.
 
 
 Number Of Keys Recommended
@@ -953,7 +950,7 @@ distributions.  That is, there needs to be a way to ensure consistency of
 metadata and repository files when multiple developers simultaneously update
 the same metadata or distributions.  Without TUF, there are also issues with
 consistency on PyPI, but the problem is more severe with signed metadata that
-MUST keep track in real-time the files available on PyPI.
+MUST keep track, in real-time, of the files available on PyPI.
 
 Suppose that PyPI generates a *snapshot*, which describes the latest version of
 every metadata (except *timestamp*), at specified version 1, and that a client
@@ -962,7 +959,7 @@ requests this *snapshot* from PyPI.  While the client is busy downloading this
 ensuring consistency of metadata, the client would find itself with a copy of
 *snapshot* that is inconsistent with what is available on PyPI: this situation
 is indistinguishable from arbitrary metadata injected by an attacker.  The
-problem would also occur with mirrors attempting to sync with PyPI.
+problem would also occur with mirrors that attempt to sync with PyPI.
 
 
 Consistent Snapshots
