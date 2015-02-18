@@ -522,7 +522,7 @@ METAFILES is an object whose format is the following:
   ...
 }
 
-METAPATH is the the metadata file's path on the repository relative to the
+METAPATH is the metadata file's path on the repository relative to the
 metadata base URL.
 
 
@@ -538,7 +538,7 @@ Delegating trust means that the delegated role is trusted for some or all of
 the target files available from the repository. When delegated roles are
 specified, they are specified in a similar way to how the Root role specifies
 the top-level roles: the trusted keys and signature threshold for each role is
-given. Additionally, one or more patterns are specified which indicate the
+given. Additionally, one or more patterns are specified that indicate the
 target file paths for which clients should trust each delegated role.
 
 
@@ -778,7 +778,7 @@ iterations by default, but this may be overridden by the developer). The
 current Python implementation of TUF can use any cryptographic library
 (PyCrypto [24]_ is currently used to encrypt the TUF key files, but support for
 PyCA Cryptography can be added in the future), may override the default number
-of PBKDF2 iterations, and the KDF tweaked to preference.  However, the exact
+of PBKDF2 iterations, and the KDF may be tweaked to preference.  However, the exact
 cryptographic constructions can be adjusted to include future primitives added
 by the cryptographic libraries supported.
 
