@@ -3,8 +3,8 @@ Title: Securing the Link from PyPI to the End User
 Version: $Revision$
 Last-Modified: $Date$
 Author: Trishank Karthik Kuppusamy <trishank@nyu.edu>,
-        Vladimir Diaz <vladimir.diaz@nyu.edu>,
-        Donald Stufft <donald@stufft.io>, Justin Cappos <jcappos@nyu.edu>
+Vladimir Diaz <vladimir.diaz@nyu.edu>, Donald Stufft <donald@stufft.io>,
+Justin Cappos <jcappos@nyu.edu>
 BDFL-Delegate: Richard Jones <r1chardj0n3s@gmail.com>
 Discussions-To: DistUtils mailing list <distutils-sig@python.org>
 Status: Draft
@@ -132,7 +132,7 @@ Definitions
 
 The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-interpreted as described in RFC 2119__.
+interpreted as described in RFC `2119`__.
 
 __ http://www.ietf.org/rfc/rfc2119.txt
 
@@ -262,15 +262,15 @@ The following steps are performed by TUF during a software update.
 1. TUF downloads and verifies *timestamp.json*.
 
 2. If *timestamp.json* indicates that *snapshot.json* has changed, TUF
-downloads and verifies *release.json.*.
+   downloads and verifies *release.json.*.
 
 3. TUF determines which metadata files listed in *snapshot.json* differ from
-those described in the last *snapshot.json* that TUF has referenced. If
-*root.json* has changed, the update process starts over using the new
-*root.json*.
+   those described in the last *snapshot.json* that TUF has referenced. If
+   *root.json* has changed, the update process starts over using the new
+   *root.json*.
 
 4. TUF provides the software update system with a list of available projects
-according to *targets.json*.
+   according to *targets.json*.
 
 5. The software update system instructs TUF to download a specific package.
 
@@ -453,20 +453,22 @@ replaced.
 
 The format of root.json is as follows:
 
-{
-  "_type" : "Root",
-  "version" : VERSION,
-  "expires" : EXPIRES,
-  "keys" : {
-    KEYID : KEY
-    , ... },
-  "roles" : {
-    ROLE : {
-      "keyids" : [ KEYID, ... ] ,
-      "threshold" : THRESHOLD },
-    ...
+.. code-block::
+
+  {
+    "_type" : "Root",
+    "version" : VERSION,
+    "expires" : EXPIRES,
+    "keys" : {
+      KEYID : KEY
+      , ... },
+    "roles" : {
+      ROLE : {
+        "keyids" : [ KEYID, ... ] ,
+        "threshold" : THRESHOLD },
+      ...
+    }
   }
-}
 
 VERSION is an integer that is greater than 0.  Clients MUST NOT replace a
 metadata file with a version number less than the one currently trusted.
@@ -503,22 +505,26 @@ mirrors.json.
 
 The format of snapshot.json is as follows:
 
-{
-  "_type" : "Snapshot",
-  "version" : VERSION,
-  "expires" : EXPIRES,
-  "meta" : METAFILES
-}
+.. code-block::
+
+  {
+    "_type" : "Snapshot",
+    "version" : VERSION,
+    "expires" : EXPIRES,
+    "meta" : METAFILES
+  }
 
 METAFILES is an object whose format is the following:
 
-{
-  METAPATH : {
-    "length" : LENGTH,
-    "hashes" : HASHES,
-    ("custom" : { ... }) },
-  ...
-}
+.. code-block::
+  
+  {
+    METAPATH : {
+      "length" : LENGTH,
+      "hashes" : HASHES,
+      ("custom" : { ... }) },
+    ...
+  }
 
 METAPATH is the metadata file's path on the repository relative to the
 metadata base URL.
@@ -542,23 +548,27 @@ paths for which clients should trust each delegated role.
 
 The format of targets.json is as follows:
 
-{
-  "_type" : "Targets",
-  "version" : VERSION,
-  "expires" : EXPIRES,
-  "targets" : TARGETS,
-  ("delegations" : DELEGATIONS)
-}
+.. code-block::
+  
+  {
+    "_type" : "Targets",
+    "version" : VERSION,
+    "expires" : EXPIRES,
+    "targets" : TARGETS,
+    ("delegations" : DELEGATIONS)
+  }
 
 TARGETS is an object whose format is the following:
 
-{
-  TARGETPATH : {
-    "length" : LENGTH,
-    "hashes" : HASHES,
-    ("custom" : { ... }) },
-  ...
-}
+.. code-block::
+
+  {
+    TARGETPATH : {
+      "length" : LENGTH,
+      "hashes" : HASHES,
+      ("custom" : { ... }) },
+    ...
+  }
 
 Each key of the TARGETS object is a TARGETPATH.  A TARGETPATH is a path to
 a file that is relative to a mirror's base URL of targets.
@@ -575,20 +585,22 @@ application may use this information to guide download decisions.
 
 DELEGATIONS is an object whose format is the following:
 
-{
-  "keys" : {
-    KEYID : KEY,
+.. code-block::
+
+  {
+    "keys" : {
+      KEYID : KEY,
+      ...
+    },
+    "roles" : [{
+      "name": ROLE,
+      "keyids" : [ KEYID, ... ] ,
+      "threshold" : THRESHOLD,
+      ("path_hash_prefixes" : [ HEX_DIGEST, ... ] |
+      "paths" : [ PATHPATTERN, ... ])},
     ...
-  },
-  "roles" : [{
-    "name": ROLE,
-    "keyids" : [ KEYID, ... ] ,
-    "threshold" : THRESHOLD,
-    ("path_hash_prefixes" : [ HEX_DIGEST, ... ] |
-    "paths" : [ PATHPATTERN, ... ])},
-  ...
-  ]
-}
+    ]
+  }
 
 In order to discuss target paths, a role MUST specify only one of the
 "path_hash_prefixes" or "paths" attributes, each of which we discuss next.
@@ -622,12 +634,14 @@ information in them will be avoided.
 
 The format of the timestamp file is as follows:
 
-{
-  "_type" : "Timestamp",
-  "version" : VERSION,
-  "expires" : EXPIRES,
-  "meta" : METAFILES
-}
+.. code-block::
+
+  {
+    "_type" : "Timestamp",
+    "version" : VERSION,
+    "expires" : EXPIRES,
+    "meta" : METAFILES
+  }
 
 METAFILES has the same format as the "meta" object of the snapshot.json file.
 In the case of the timestamp.json file, this will commonly include only a
@@ -782,35 +796,48 @@ added to the cryptographic libraries supported by framework.
 
 Key objects stored in encrypted key files and in metadata have the format:
 
-{ "keytype" : KEYTYPE,
-  "keyval" : KEYVAL
-}
+.. code-block::
+
+  {
+    "keytype" : KEYTYPE,
+    "keyval" : KEYVAL
+  }
 
 All keys have the format:
 
-{ "keytype" : KEYTYPE,
-"keyval" : KEYVAL }
+.. code-block::
+
+  {
+    "keytype" : KEYTYPE,
+    "keyval" : KEYVAL
+  }
 
 where KEYTYPE is a string describing the type of the key ("ed25519") and how
 it's used to sign documents.  The type determines the interpretation of KEYVAL.
 
 The 'ed25519' key format is:
 
-{ "keytype" : "ed25519",
-  "keyval" :
-    { "public" : PUBLIC,
-      "private" : PRIVATE
-    }
-}
+.. code-block::
+
+  {
+    "keytype" : "ed25519",
+    "keyval" :
+      { "public" : PUBLIC,
+        "private" : PRIVATE
+      }
+  }
 
 where PUBLIC and PRIVATE are both 32-byte strings.
 
 Metadata does not include the private portion of the key object:
 
-{ "keytype" : "ed25519",
-  "keyval" :
-    { "public" : PUBLIC}
-}
+.. code-block::
+
+  {
+    "keytype" : "ed25519",
+    "keyval" :
+      { "public" : PUBLIC}
+  }
 
 The KEYID of a key is the hexdigest of the SHA-256 hash of the canonical JSON
 form of the key, where the "private" object key is excluded.
@@ -867,16 +894,18 @@ __ http://wiki.laptop.org/go/Canonical_JSON
 
 Signed JSON metadata has the following format:
 
-{
-  "signed" : ROLE,
-  "signatures" : [
-    { "keyid" : KEYID,
-      "method" : METHOD,
-      "sig" : SIGNATURE,
-    },
-    ...
-  ]
-}
+.. code-block::
+
+  {
+    "signed" : ROLE,
+    "signatures" : [
+      { "keyid" : KEYID,
+        "method" : METHOD,
+        "sig" : SIGNATURE,
+      },
+      ...
+    ]
+  }
 
 ROLE is a dictionary whose "_type" field describes the role type.  KEYID is the
 identifier (64-byte hexstring) of the key that signs the ROLE dictionary.
@@ -928,7 +957,7 @@ attacks [21]_ unless diversity of keys is maintained.
 
 
 On-pypi and off-pypi Keys Recommended for Each Role
--------------------------------------------------
+---------------------------------------------------
 
 In order to support continuous delivery, the *timestamp*, *snapshot*,
 *pypi-signed* role keys MUST be stored on the PyPI infrastructure (on-pypi
@@ -938,6 +967,32 @@ As explained in the previous section, the *root* and *targets* role keys MUST
 be off-pypi for maximum security: these keys will be off-pypi in the sense that
 their private keys MUST NOT be stored on PyPI, though some of them MAY be
 on-pypi in the private infrastructure of the project.
+
+
+Management of Off-pypi Keys
+---------------------------
+
+The management of off-pypi keys, such as those expected to sign *root.json*,
+can be burdensome to the PyPI administrators who are geographically distributed
+around the world.  A security token, or software token, is a physical device
+that authorized PyPI administrators can use to ease authentication and
+management of keys not stored on PyPI infrastructure.  `Yubico`__ offers
+physical devices, such as the `Yubikey`__ and YubiHSM (Hardware Security
+Module), that can generate one-time passcodes, store secrets, and support
+2-factor authentication & smart card functionality.  These devices are
+inexpensive (typically $25 - $60) and small (the size of a regular USB thumb
+drives, or smaller).  Yubico also provides `software projects`__ (many written
+in Python) that developers can use to integrate Yubico products.
+
+__ https://www.yubico.com/products/
+__ https://www.yubico.com/products/yubikey-hardware/
+__ https://github.com/Yubico/
+
+Other security tokens available to PyPI adminisrators to assist in the
+management of off-pypi keys include: `Plug-up`__ and `Digiflak`__.
+
+__ http://sk.plug-up.com/
+__ http://www.digiflak.com/product/
 
 
 How Should Metadata be Generated?
@@ -1130,7 +1185,7 @@ attack, or metadata inconsistency attacks.
 |                 | timestamp and     | timestamp      | timestamp needs to cooperate   |
 |                 | targets or any of | needs to       |                                |
 |                 | the pypi-signed   | cooperate      |                                |
-                  | bins need to      |                |                                |
+|                 | bins need to      |                |                                |
 |                 | cooperate         |                |                                |
 +-----------------+-------------------+----------------+--------------------------------+
 | timestamp       | NO                | YES            | YES                            |
@@ -1292,7 +1347,7 @@ indicates an attack.
 
 As for attacks that serve different versions of metadata, or freeze a version
 of a package at a specific version, they can be handled by TUF with techniques
-like implicit key revocation and metadata mismatch detection [81].
+like implicit key revocation and metadata mismatch detection.
 
 
 Appendix A: Repository Attacks Prevented by TUF
@@ -1378,7 +1433,7 @@ in this section:
    distributions and manage keys is expected to render key signing an unused
    feature.
 
-    __ https://minilock.io/
+   __ https://minilock.io/
 
 3. A two-phase approach, where the minimum security model is implemented first
    followed by the maximum security model, can simplify matters and give PyPI
