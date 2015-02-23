@@ -940,7 +940,7 @@ their private keys MUST NOT be stored on PyPI, though some of them MAY be
 on-pypi in the private infrastructure of the project.
 
 
-Management of off-pypi keys
+Management of Off-pypi Keys
 ---------------------------
 
 The management of off-pypi keys, such as those expected to sign *root.json*,
@@ -950,9 +950,10 @@ that authorized PyPI administrators can use to ease authentication and
 management of keys not stored on PyPI infrastructure.  `Yubico`__ offers
 physical devices, such as the `Yubikey`__ and YubiHSM (Hardware Security
 Module), that can generate one-time passcodes, store secrets, and support
-2-factor authentication & smart card functionality.  Yubico also provides
-`software projects`__ (many written in Python) that developers can use to
-integrate Yubico products.
+2-factor authentication & smart card functionality.  These devices are
+inexpensive (typically $25 - $60) and small (the size of a regular USB thumb
+drives, or smaller).  Yubico also provides `software projects`__ (many written
+in Python) that developers can use to integrate Yubico products.
 
 __ https://www.yubico.com/products/
 __ https://www.yubico.com/products/yubikey-hardware/
