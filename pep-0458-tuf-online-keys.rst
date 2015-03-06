@@ -114,7 +114,7 @@ Threat Model
 
 The threat model assumes the following:
 
-* Keys not kept on PyPI infrastructure are safe and securely stored.
+* Keys that are not kept on PyPI infrastructure are safe and securely stored.
 
 * Attackers can compromise at least one of PyPI's trusted keys stored on the
   PyPI infrastructure, and may do so at once or over a period of time.
@@ -262,7 +262,7 @@ The following steps are performed by TUF during a software update.
 1. TUF downloads and verifies *timestamp.json*.
 
 2. If *timestamp.json* indicates that *snapshot.json* has changed, TUF
-   downloads and verifies *release.json.*.
+   downloads and verifies *snapshot.json.*.
 
 3. TUF determines which metadata files listed in *snapshot.json* differ from
    those described in the last *snapshot.json* that TUF has referenced. If
@@ -1172,7 +1172,7 @@ attack, or metadata inconsistency attacks.
 +-----------------+-------------------+----------------+--------------------------------+
 | Role Compromise | Malicious Updates | Freeze Attack  | Metadata Inconsistency Attacks |
 +=================+===================+================+================================+
-| timestamp       | NO                | YES            | NO                             |
+| timestamp       | **NO**            | **YES**        | **NO**                         |
 |                 | snapshot and      | limited by     | snapshot needs to cooperate    |
 |                 | targets or any    | earliest root, |                                |
 |                 | of the            | targets, or    |                                |
@@ -1181,34 +1181,34 @@ attack, or metadata inconsistency attacks.
 |                 |                   | time           |                                |
 |                 |                   |                |                                |
 +-----------------+-------------------+----------------+--------------------------------+
-| snapshot        | NO                | NO             | NO                             |
+| snapshot        | **NO**            | **NO**         | **NO**                         |
 |                 | timestamp and     | timestamp      | timestamp needs to cooperate   |
 |                 | targets or any of | needs to       |                                |
 |                 | the pypi-signed   | cooperate      |                                |
 |                 | bins need to      |                |                                |
 |                 | cooperate         |                |                                |
 +-----------------+-------------------+----------------+--------------------------------+
-| timestamp       | NO                | YES            | YES                            |
+| timestamp       | **NO**            | **YES**        | **YES**                        |
 | **AND**         | targets or any    | limited by     | limited by earliest root,      |
-| snapshot        | of the            | the earliest , | targets, or pypi-signed        |
+| snapshot        | of the            | the earliest   | targets, or pypi-signed        |
 |                 | pypi-signed bins  | root, targets, | metadata expiry time           |
 |                 | need to cooperate | or pypi-signed |                                |
 |                 |                   | bins expiry    |                                |
 |                 |                   | time           |                                |
 +-----------------+-------------------+----------------+--------------------------------+
-| targets         | NO                | NOT APPLICABLE | NOT APPLICABLE                 |
+| targets         | **NO**            | NOT APPLICABLE | NOT APPLICABLE                 |
 | **OR**          | timestamp and     | need timestamp | need timestamp and snapshot    |
 | pypi-signed     | snapshot need to  | and snapshot   |                                |
 |                 | cooperate         |                |                                |
 +-----------------+-------------------+----------------+--------------------------------+
-| timestamp       | YES               | YES            | YES                            |
+| timestamp       | **YES**           | **YES**        | **YES**                        |
 | **AND**         |                   | limited by     | limited by earliest root,      |
 | snapshot        |                   | earliest root, | targets, or pypi-signed        |
 | **AND**         |                   | targets, or    | metadata expiry time           |
 | pypi-signed     |                   | pypi-signed    |                                |
 |                 |                   | expiry time    |                                |
 +-----------------+-------------------+----------------+--------------------------------+
-| root            | YES               | YES            | YES                            |
+| root            | **YES**           | **YES**        | **YES**                        |
 +-----------------+-------------------+----------------+--------------------------------+
 
 Table 1: Attacks possible by compromising certain combinations of role keys.
@@ -1380,7 +1380,7 @@ Appendix A: Repository Attacks Prevented by TUF
   but may have known vulnerabilities that are exploitable by the attacker.
 
 * **Mix-and-match attacks**: An attacker presents clients with a view of a
-  repository that includes files that never existed together on the repository
+  repository that includes files that did not exist together on the repository
   at the same time. This can result in, for example, outdated versions of
   dependencies being installed.
 
