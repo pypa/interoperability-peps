@@ -27,23 +27,6 @@ This document addresses several limitations of the previous attempt at a
 standardized approach to versioning, as described in PEP 345 and PEP 386.
 
 
-Provisional status of this specification
-========================================
-
-The version representation and comparison scheme described in this PEP is
-currently accepted on a provisional basis [9]_, as described in PEP 411.
-
-This status is based on feedback received on the initial releases of pip 6.0,
-and setuptools 8.0, which revealed some issues in the specification that
-had not been identified prior to acceptance. These issues will be addressed
-within PEP 440 itself, rather than introducing an entirely new PEP to cover
-relatively minor changes to a standard that has only just begun to be adopted.
-
-A future update proposal for PEP 1 will aim to make this Provisional phase
-for the initial release of the reference implementations a formal part of
-the PEP process that can be accurately tracked in the PEP metadata.
-
-
 Definitions
 ===========
 
@@ -176,8 +159,10 @@ An "upstream project" is a project that defines its own public versions. A
 potentially backporting security and bug fixes from later versions of the
 upstream project.
 
-Local version identifiers SHOULD NOT be used for upstream projects. Local
-version identifiers SHOULD be used by dowstream projects when releasing a
+Local version identifiers SHOULD NOT be used when publishing upstream
+projects to a public index server, but MAY be used to identify private
+builds created directly from the project source. Local
+version identifiers SHOULD be used by downstream projects when releasing a
 version that is API compatible with the version of the upstream project
 identified by the public version identifier, but contains additional changes
 (such as bug fixes). As the Python Package Index is intended solely for
@@ -355,10 +340,12 @@ post-releases::
 
 .. note::
 
-   Creating developmental releases of pre-releases is strongly
-   discouraged, as it makes the version identifier difficult to parse for
-   human readers. In general, it is substantially clearer to simply create
-   additional pre-releases by incrementing the numeric component.
+   While they may be useful for continuous integration purposes, publishing
+   developmental releases of pre-releases to general purpose public index
+   servers is strongly discouraged, as it makes the version identifier
+   difficult to parse for human readers. If such a release needs to be
+   published, it is substantially clearer to instead create a new
+   pre-release by incrementing the numeric component.
 
    Developmental releases of post-releases are also strongly discouraged,
    but they may be appropriate for projects which use the post-release
@@ -459,7 +446,7 @@ allows versions such as ``1.2a`` which is normalized to ``1.2a0``.
 Post release separators
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Post releases allow a ``.``,``-``, or ``_`` separator as well as omitting the
+Post releases allow a ``.``, ``-``, or ``_`` separator as well as omitting the
 separator all together. The normal form of this is with the ``.`` separator.
 This allows versions such as ``1.2-post2`` or ``1.2post2`` which normalize to
 ``1.2.post2``. Like the pre-release seperator this also allows an optional
@@ -1177,16 +1164,15 @@ to a ``file://`` url, it would end up as ``file://machine/volume/file``. For
 more information on ``file://`` URLs on Windows see MSDN [4]_.
 
 
-
 Updating the versioning specification
 =====================================
 
 The versioning specification may be updated with clarifications without
 requiring a new PEP or a change to the metadata version.
 
-Once the Provisional caveat is removed from the specification, any further
-changes to the version comparison semantics will require an updated
-versioning scheme defined in a new PEP.
+Any technical changes that impact the version identification and comparison
+syntax and semantics would require an updated versioning scheme to be
+defined in a new PEP.
 
 
 Summary of differences from pkg_resources.parse_version
