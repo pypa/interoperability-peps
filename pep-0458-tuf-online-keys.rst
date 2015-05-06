@@ -495,6 +495,79 @@ the combined date and time string is "YYYY-MM-DDTHH:MM:SSZ".  Time is always in
 UTC, and the "Z" time zone designator is attached to indicate a zero UTC
 offset.  An example date-time string is "1985-10-21T01:21:00Z".
 
+A signed *root.json* example file:
+
+.. code-block::
+
+  {
+   "signatures": [
+    {
+     "keyid": "f2d5020d08aea06a0a9192eb6a4f549e17032ebefa1aa9ac167c1e3e727930d6", 
+     "method": "ed25519", 
+     "sig": "a312b9c3cb4a1b693e8ebac5ee1ca9cc01f2661c14391917dcb111517f72370809
+             f32c890c6b801e30158ac4efe0d4d87317223077784c7a378834249d048306"
+    }
+   ], 
+   "signed": {
+    "_type": "Root", 
+    "consistent_snapshot": false, 
+    "expires": "2030-01-01T00:00:00Z", 
+    "keys": {
+     "1a2b4110927d4cba257262f614896179ff85ca1f1353a41b5224ac474ca71cb4": {
+      "keytype": "ed25519", 
+      "keyval": {
+       "public": "72378e5bc588793e58f81c8533da64a2e8f1565c1fcc7f253496394ffc52542c"
+      }
+     }, 
+     "93ec2c3dec7cc08922179320ccd8c346234bf7f21705268b93e990d5273a2a3b": {
+      "keytype": "ed25519", 
+      "keyval": {
+       "public": "68ead6e54a43f8f36f9717b10669d1ef0ebb38cee6b05317669341309f1069cb"
+      }
+     }, 
+     "f2d5020d08aea06a0a9192eb6a4f549e17032ebefa1aa9ac167c1e3e727930d6": {
+      "keytype": "ed25519", 
+      "keyval": {
+       "public": "66dd78c5c2a78abc6fc6b267ff1a8017ba0e8bfc853dd97af351949bba021275"
+      }
+     }, 
+     "fce9cf1cc86b0945d6a042f334026f31ed8e4ee1510218f198e8d3f191d15309": {
+      "keytype": "ed25519", 
+      "keyval": {
+       "public": "01c61f8dc7d77fcef973f4267927541e355e8ceda757e2c402818dad850f856e"
+      }
+     }
+    }, 
+    "roles": {
+     "root": {
+      "keyids": [
+       "f2d5020d08aea06a0a9192eb6a4f549e17032ebefa1aa9ac167c1e3e727930d6"
+      ], 
+      "threshold": 1
+     }, 
+     "snapshot": {
+      "keyids": [
+       "fce9cf1cc86b0945d6a042f334026f31ed8e4ee1510218f198e8d3f191d15309"
+      ], 
+      "threshold": 1
+     }, 
+     "targets": {
+      "keyids": [
+       "93ec2c3dec7cc08922179320ccd8c346234bf7f21705268b93e990d5273a2a3b"
+      ], 
+      "threshold": 1
+     }, 
+     "timestamp": {
+      "keyids": [
+       "1a2b4110927d4cba257262f614896179ff85ca1f1353a41b5224ac474ca71cb4"
+      ], 
+      "threshold": 1
+     }
+    }, 
+    "version": 1
+   }
+  }
+
 
 snapshot.JSON
 ~~~~~~~~~~~~~
@@ -528,6 +601,56 @@ METAFILES is an object whose format is the following:
 
 METAPATH is the metadata file's path on the repository relative to the
 metadata base URL.
+
+The HASH and LENGTH are the hash and length of the target file.  LENGTH is an
+integer.  HASHES is a dictionary that specifies one or more hashes, including
+the cryptographic hash function.  For example: {"sha256": HASH, ...}
+
+A signed *snapshot.json* example file:
+
+.. code-block::
+
+  {
+   "signatures": [
+    {
+     "keyid": "fce9cf1cc86b0945d6a042f334026f31ed8e4ee1510218f198e8d3f191d15309", 
+     "method": "ed25519", 
+     "sig": "f7f03b13e3f4a78a23561419fc0dd741a637e49ee671251be9f8f3fceedfc112e4
+             4ee3aaff2278fad9164ab039118d4dc53f22f94900dae9a147aa4d35dcfc0f"
+    }
+   ], 
+   "signed": {
+    "_type": "Snapshot", 
+    "expires": "2030-01-01T00:00:00Z", 
+    "meta": {
+     "root.json": {
+      "hashes": {
+       "sha256": "52bbb30f683d166fae5c366e4582cfe8212aacbe1b21ae2026dae58ec55d3701"
+      }, 
+      "length": 1831
+     }, 
+     "targets.json": {
+      "hashes": {
+       "sha256": "f592d072e1193688a686267e8e10d7257b4ebfcf28133350dae88362d82a0c8a"
+      }, 
+      "length": 1184
+     }, 
+     "targets.json.gz": {
+      "hashes": {
+       "sha256": "9f8aff5b55ee4b3140360d99b39fa755a3ea640462072b4fd74bdd72e6fe245a"
+      }, 
+      "length": 599
+     }, 
+     "targets/project.json": {
+      "hashes": {
+       "sha256": "1f812e378264c3085bb69ec5f6663ed21e5882bbece3c3f8a0e8479f205ffb91"
+      }, 
+      "length": 604
+     }
+    }, 
+    "version": 1
+   }
+  }
 
 
 targets.JSON and delegated target roles
@@ -576,11 +699,10 @@ a file that is relative to a mirror's base URL of targets.
 It is allowed to have a TARGETS object with no TARGETPATH elements.  This can
 be used to indicate that no target files are available.
 
-The HASH and LENGTH are the hash and length of the target file. If defined, the
-elements and values of "custom" will be made available to the client
-application.  The information in "custom" is opaque to the framework and can
-include version numbers, dependencies, requirements, and any other data that
-the application wants to include to describe the file at TARGETPATH.  The
+If defined, the elements and values of "custom" will be made available to the
+client application.  The information in "custom" is opaque to the framework and
+can include version numbers, dependencies, requirements, and any other data
+that the application wants to include to describe the file at TARGETPATH.  The
 application may use this information to guide download decisions.
 
 DELEGATIONS is an object whose format is the following:
@@ -593,7 +715,7 @@ DELEGATIONS is an object whose format is the following:
       ...
     },
     "roles" : [{
-      "name": ROLE,
+      "name": ROLENAME,
       "keyids" : [ KEYID, ... ] ,
       "threshold" : THRESHOLD,
       ("path_hash_prefixes" : [ HEX_DIGEST, ... ] |
@@ -601,6 +723,9 @@ DELEGATIONS is an object whose format is the following:
     ...
     ]
   }
+
+ROLENAME is the full role name of the delegated role.  For example,
+"targets/projects".
 
 In order to discuss target paths, a role MUST specify only one of the
 "path_hash_prefixes" or "paths" attributes, each of which we discuss next.
@@ -619,6 +744,62 @@ delegation chain, not just in a trusted path of the role that describes the
 target file.  The format of a PATHPATTERN may be either a path to a single
 file, or a path to a directory to indicate all files and/or subdirectories
 under that directory.
+
+A *targets.json* example file:
+
+.. code-block::
+
+  {
+   "signatures": [
+    {
+     "keyid": "93ec2c3dec7cc08922179320ccd8c346234bf7f21705268b93e990d5273a2a3b", 
+     "method": "ed25519", 
+     "sig": "e9fd40008fba263758a3ff1dc59f93e42a4910a282749af915fbbea1401178e5a0
+             12090c228f06db1deb75ad8ddd7e40635ac51d4b04301fce0fd720074e0209"
+    }
+   ], 
+   "signed": {
+    "_type": "Targets", 
+    "delegations": {
+     "keys": {
+      "ce3e02e72980b09ca6f5efa68197130b381921e5d0675e2e0c8f3c47e0626bba": {
+       "keytype": "ed25519", 
+       "keyval": {
+        "public": "b6e40fb71a6041212a3d84331336ecaa1f48a0c523f80ccc762a034c727606fa"
+       }
+      }
+     }, 
+     "roles": [
+      {
+       "keyids": [
+        "ce3e02e72980b09ca6f5efa68197130b381921e5d0675e2e0c8f3c47e0626bba"
+       ], 
+       "name": "targets/project", 
+       "paths": [
+        "/project/file3.txt"
+       ], 
+       "threshold": 1
+      }
+     ]
+    }, 
+    "expires": "2030-01-01T00:00:00Z", 
+    "targets": {
+     "/file1.txt": {
+      "hashes": {
+       "sha256": "65b8c67f51c993d898250f40aa57a317d854900b3a04895464313e48785440da"
+      }, 
+      "length": 31
+     }, 
+     "/file2.txt": {
+      "hashes": {
+       "sha256": "452ce8308500d83ef44248d8e6062359211992fd837ea9e370e561efb1a4ca99"
+      }, 
+      "length": 39
+     }
+    }, 
+    "version": 1
+   }
+  }
 
 
 timestamp.JSON
@@ -646,6 +827,34 @@ The format of the timestamp file is as follows:
 METAFILES has the same format as the "meta" object of the snapshot.json file.
 In the case of the timestamp.json file, this will commonly include only a
 description of the snapshot.json file.
+
+A *timestamp.json* example file:
+
+.. code-block::
+
+  {
+   "signatures": [
+    {
+     "keyid": "1a2b4110927d4cba257262f614896179ff85ca1f1353a41b5224ac474ca71cb4", 
+     "method": "ed25519", 
+     "sig": "90d2a06c7a6c2a6a93a9f5771eb2e5ce0c93dd580bebc2080d10894623cfd6eaed
+             f4df84891d5aa37ace3ae3736a698e082e12c300dfe5aee92ea33a8f461f02"
+    }
+   ], 
+   "signed": {
+    "_type": "Timestamp", 
+    "expires": "2030-01-01T00:00:00Z", 
+    "meta": {
+     "snapshot.json": {
+      "hashes": {
+       "sha256": "c14aeb4ac9f4a8fc0d83d12482b9197452f6adf3eb710e3b1e2b79e8d14cb681"
+      }, 
+      "length": 1007
+     }
+    }, 
+    "version": 1
+   }
+  }
 
 
 How to Establish Initial Trust in the PyPI Root Keys
@@ -1364,7 +1573,9 @@ Appendix A: Repository Attacks Prevented by TUF
 
 * **Indefinite freeze attacks**: An attacker continues to present a software
   update system with the same files the client has already seen. The result is
-  that the client does not know that new files are available.
+  that the client does not know that new files are available.  Attackers
+  should not be able to respond to client requests with the same, outdated
+  metadata without the client being aware of the problem.
 
 * **Endless data attacks**: An attacker responds to a file download request
   with an endless stream of data, causing harm to clients (e.g., a disk
