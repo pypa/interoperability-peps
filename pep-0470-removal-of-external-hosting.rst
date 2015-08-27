@@ -3,7 +3,7 @@ Title: Removing External Hosting support on PyPI
 Version: $Revision$
 Last-Modified: $Date$
 Author: Donald Stufft <donald@stufft.io>,
-BDFL-Delegate: Richard Jones <richard@python.org>
+BDFL-Delegate: TBD
 Discussions-To: distutils-sig@python.org
 Status: Draft
 Type: Process
