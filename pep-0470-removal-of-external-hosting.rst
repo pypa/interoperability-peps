@@ -284,6 +284,37 @@ safely host outside of PyPI while 95% of them are exposing their users to
 Remote Code Execution via a Man In The Middle attack.
 
 
+Opposition
+==========
+
+The primary opposition to this PEP is that some people may want to not host on
+PyPI for any number of reasons such as the PyPI Terms of Service or Data
+Sovereignty requirements for a particular jurisdiction. For these people this
+PEP represents a regression in the ability for end users to discover what
+options are required to install their projects.
+
+The projects that are currently unwilling to host on PyPI can be split into
+two general categories, those that would be willing to host on PyPI but for
+some particular missing feature, and those that will never be willing to host
+on PyPI for any reason.
+
+It is the opinion of this PEP that for those who will never be willing to host
+on PyPI for any reason, that those projects should rely on the support of
+multiple repositories that pip and setuptools already possess and which this
+PEP recommends to all installers. These projects may still use PyPI as an index
+for users to discover through the web interface and should document what
+options are needed in order to install within the long description of their
+projects, which is a freeform field which can structure the information however
+is most useful for their particular project. This is a model which is battle
+tested in virtually every Linux distribution.
+
+For the projects that would host on PyPI but for some particular missing
+feature, it is the opinion of this PEP that instead of the legacy feature that
+this PEP aims to remove, they would be be best served by identifying which
+features are missing and then designing a good solution for those particular
+issues.
+
+
 Rejected Proposals
 ==================
 
