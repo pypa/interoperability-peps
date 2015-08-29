@@ -2,8 +2,8 @@ PEP: 470
 Title: Removing External Hosting Support on PyPI
 Version: $Revision$
 Last-Modified: $Date$
-Author: Donald Stufft <donald@stufft.io>,
-BDFL-Delegate: TBD
+Author: Donald Stufft <donald@stufft.io>
+BDFL-Delegate: Paul Moore <p.f.moore@gmail.com>
 Discussions-To: distutils-sig@python.org
 Status: Draft
 Type: Process
