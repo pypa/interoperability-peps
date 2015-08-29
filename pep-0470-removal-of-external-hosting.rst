@@ -284,28 +284,6 @@ safely host outside of PyPI while 95% of them are exposing their users to
 Remote Code Execution via a Man In The Middle attack.
 
 
-Data Sovereignty
-================
-
-In the discussions around previous versions of this PEP, one of the key use
-cases for wanting to host files externally to PyPI was due to data sovereignty
-requirements for people living in jurisdictions outside of the USA, where PyPI
-is currently hosted. The author of this PEP is not blind to these concerns and
-realizes that this PEP represents a regression for the people that have these
-concerns, however the current situation is presenting an extremely poor user
-experience and the feature is only being used by a small percentage of
-projects. In addition, the data sovereignty problems requires familarity with
-the laws outside of the home jurisdiction of the author of this PEP, who is
-also the principal developer and operator of PyPI. For these reasons, a
-solution for the problem of data sovereignty has been deferred and is
-considered outside of the scope for this PEP.
-
-The data sovereignty issue will need to  be addressed by someone with an
-understanding of the restrictions and constraints involved. As the author of
-this PEP does not have that expertise, it should be addressed in a separate
-PEP.
-
-
 Rejected Proposals
 ==================
 
