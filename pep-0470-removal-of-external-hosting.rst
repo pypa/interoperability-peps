@@ -354,6 +354,7 @@ particular PEP is intended to focus on getting us to a point where the
 capabilities of PyPI are straightforward with an easily understood baseline
 that is similar to existing models such as Linux distribution repositories.
 
+
 Why should I register on PyPI if I'm running my own repository anyways?
 -----------------------------------------------------------------------
 
