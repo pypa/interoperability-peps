@@ -22,3 +22,10 @@ Other directories
 `unpublished`: draft documents that have yet to receive a PEP number
 `schemas`: jsonschema files
 
+
+Code of Conduct
+---------------
+
+Everyone interacting in the interoperability PEPs project's codebases, issue
+trackers, chat rooms, and mailing lists is expected to follow the
+[PyPA Code of Conduct](https://www.pypa.io/en/latest/code-of-conduct/).
