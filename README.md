@@ -19,8 +19,8 @@ So, for example, the PEP 440 versioning specification is:
 Other directories
 -----------------
 
-`unpublished`: draft documents that have yet to receive a PEP number
-`schemas`: jsonschema files
+- `unpublished`: draft documents that have yet to receive a PEP number
+- `schemas`: jsonschema files
 
 
 Code of Conduct
