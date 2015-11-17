@@ -716,6 +716,7 @@ DELEGATIONS is an object whose format is the following:
     },
     "roles" : [{
       "name": ROLENAME,
+      "backtrack": BOOLEAN,
       "keyids" : [ KEYID, ... ] ,
       "threshold" : THRESHOLD,
       ("path_hash_prefixes" : [ HEX_DIGEST, ... ] |
@@ -726,6 +727,16 @@ DELEGATIONS is an object whose format is the following:
 
 ROLENAME is the full role name of the delegated role.  For example,
 "targets/projects".
+
+By default, clients will interrogate (if needed) all target roles to resolve a
+particular package. The target roles are visited according to the
+"lazy bin walk" scheme outlined in the "Metadata Scalability" section. However,
+this behaviour can be overridden by any role with the "backtrack" flag, and
+only for targets requested by the client for which the role is trusted
+to specify in its metadata.  A delegated role with its "backtrack" flag set
+to False can prevent a client, requesting a specific package, from
+interrogating subsequent delegations if the package entrusted to the role is
+not specified in its metadata.
 
 In order to discuss target paths, a role MUST specify only one of the
 "path_hash_prefixes" or "paths" attributes, each of which we discuss next.
