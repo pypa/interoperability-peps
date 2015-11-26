@@ -1,15 +1,16 @@
-:PEP: XX
-:Title: Dependency specification for Python Software Packages
-:Version: $Revision$
-:Last-Modified: $Date$
-:Author: Robert Collins <rbtcollins@hp.com>
-:BDFL-Delegate: Donald Stufft <donald@stufft.io>
-:Discussions-To: distutils-sig <distutils-sig@python.org>
-:Status: Draft
-:Type: Standards Track
-:Content-Type: text/x-rst
-:Created: 11-Nov-2015
-:Post-History: XX
+PEP: 508
+Title: Dependency specification for Python Software Packages
+Version: $Revision$
+Last-Modified: $Date$
+Author: Robert Collins <rbtcollins@hp.com>
+BDFL-Delegate: Donald Stufft <donald@stufft.io>
+Discussions-To: distutils-sig <distutils-sig@python.org>
+Status: Accepted
+Type: Standards Track
+Content-Type: text/x-rst
+Created: 11-Nov-2015
+Post-History: 05-Nov-2015, 16-Nov-2015
+Resolution: https://mail.python.org/pipermail/distutils-sig/2015-November/027868.html
 
 
 Abstract
@@ -202,7 +203,7 @@ versions it has to be installed as a dependency. This can be expressed as so::
 A marker expression evalutes to either True or False. When it evaluates to
 False, the dependency specification should be ignored.
 
-The marker language is a subset of Python itself, chosen for the ability to
+The marker language is inspired by Python itself, chosen for the ability to
 safely evaluate it without running arbitrary code that could become a security
 vulnerability. Markers were first standardised in PEP-345 [#pep345]_. This PEP
 fixes some issues that were observed in the design described in PEP-426
