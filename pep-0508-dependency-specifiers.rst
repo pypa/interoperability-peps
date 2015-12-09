@@ -124,9 +124,8 @@ environments::
 Optional components of a distribution may be specified using the extras
 field::
 
-    identifier    = letterOrDigit (
-                    letterOrDigit |
-                    (( letterOrDigit | '-' | '_' | '.')* letterOrDigit ) )*
+    identifer_end = letterOrDigit | (('-' | '_' | '.' )* letterOrDigit)
+    identifier    = letterOrDigit identifier_end*
     name          = identifier
     extras_list   = identifier (wsp* ',' wsp* identifier)*
     extras        = '[' wsp* extras_list? wsp* ']'
@@ -388,9 +387,8 @@ The complete parsley grammar::
                       | marker_and:m -> m
     marker        = marker_or
     quoted_marker = ';' wsp* marker
-    identifier    = <letterOrDigit (
-                    letterOrDigit |
-                    (( letterOrDigit | '-' | '_' | '.')* letterOrDigit ) )*>
+    identifer_end = letterOrDigit | (('-' | '_' | '.' )* letterOrDigit)
+    identifier    = < letterOrDigit identifier_end* >
     name          = identifier
     extras_list   = identifier:i (wsp* ',' wsp* identifier)*:ids -> [i] + ids
     extras        = '[' wsp* extras_list?:e wsp* ']' -> e
@@ -475,6 +473,7 @@ A test program - if the grammar is in a string ``grammar``::
         """
     tests = [
         "A",
+        "A.B-C_D",
         "aa",
         "name",
         "name>=3",
