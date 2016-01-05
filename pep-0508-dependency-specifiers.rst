@@ -107,7 +107,7 @@ environments::
     env_var       = ('python_version' | 'python_full_version' |
                      'os_name' | 'sys_platform' | 'platform_release' |
                      'platform_system' | 'platform_version' |
-                     'platform_machine' | 'python_implementation' |
+                     'platform_machine' | 'platform_python_implementation' |
                      'implementation_name' | 'implementation_version' |
                      'extra' # ONLY when defined by a containing layer
                      )
@@ -263,7 +263,7 @@ error like all other unknown variables.
    * - ``platform_machine``
      - ``platform.machine()``
      - ``x86_64``
-   * - ``python_implementation``
+   * - ``platform_python_implementation``
      - ``platform.python_implementation()``
      - ``CPython``, ``Jython``
    * - ``platform_release``
@@ -375,7 +375,7 @@ The complete parsley grammar::
     env_var       = ('python_version' | 'python_full_version' |
                      'os_name' | 'sys_platform' | 'platform_release' |
                      'platform_system' | 'platform_version' |
-                     'platform_machine' | 'python_implementation' |
+                     'platform_machine' | 'platform_python_implementation' |
                      'implementation_name' | 'implementation_version' |
                      'extra' # ONLY when defined by a containing layer
                      ):varname -> lookup(varname)
@@ -510,11 +510,11 @@ A test program - if the grammar is in a string ``grammar``::
         'implementation_version': implementation_version,
         'os_name': os.name,
         'platform_machine': platform.machine(),
+        'platform_python_implementation': platform.python_implementation(),
         'platform_release': platform.release(),
         'platform_system': platform.system(),
         'platform_version': platform.version(),
         'python_full_version': platform.python_version(),
-        'python_implementation': platform.python_implementation(),
         'python_version': platform.python_version()[:3],
         'sys_platform': sys.platform,
     }
