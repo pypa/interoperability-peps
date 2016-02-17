@@ -11,7 +11,7 @@
 :Content-Type: text/x-rst
 :Created: 26-Oct-2015
 :Post-History: XX
-:Requires: The new dependency-specification PEP.
+:Requires: PEP-0314 [#pep314], PEP-0508 [#pep508].
 
 
 Abstract
@@ -44,6 +44,9 @@ dependencies and general project metadata. PEP-0508 [#pep508] provides a self
 contained language for describing a dependency, which we encapsulate in a thin
 JSON schema to describe bootstrap dependencies.
 
+Since Python sdists specified in PEP-0314 [#pep314] are also source trees, this
+PEP is updating the definition of sdists.
+
 Motivation
 ==========
 
@@ -75,8 +78,9 @@ or setuptools compatible build system.
 
 The JSON has the following schema. Extra keys are ignored, which permits the
 use of ``pypa.json`` as a configuration file for other related tools. If doing
-that the chosen keys must be namespaced - e.g. ``flit`` with keys under that
-rather than (say) ``build`` or other generic keys.
+that the chosen keys must be namespaced under ``tools``::
+
+  {"tools": {"flit": ["Flits content here"]}}
 
 schema
     The version of the schema. This PEP defines version "1".  Defaults to "1"
@@ -420,7 +424,12 @@ Being able to create new sdists from existing source trees isn't a thing pip
 does today, and while there is a PR to do that as part of building from
 source, it is contentious and lacks consensus. Rather than impose a
 requirement on all build systems, we are treating it as a YAGNI, and will add
-such a verb in a future version of the interface if required.
+such a verb in a future version of the interface if required. The existing
+PEP-314 [#pep314] requirements for sdists still apply, and distutils or setuptools
+users can use ``setup.py sdist`` to create an sdist. Other tools should create
+sdists compatible with PEP-314 [#pep314]. Note that pip itself does not require
+PEP-314 compatibility - it does not use any of the metadata from sdists - they
+are treated like source trees from disk or version control.
 
 References
 ==========
@@ -454,6 +463,9 @@ References
 
 .. [#strformat] The Python string formatting syntax.
    (https://docs.python.org/3.1/library/string.html#format-string-syntax)
+
+.. [#pep314] Metadata for Python Software Packages v1.1
+   (https://www.python.org/dev/peps/pep-0314/)
 
 .. [#pep508] Dependency specification language PEP.
    (https://www.python.org/dev/peps/pep-0508/)
