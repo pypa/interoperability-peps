@@ -91,18 +91,19 @@ lxml==2.4.0``, pip is acting as an integration frontend.
  Source trees
 ==============
 
-We retroactively declare the legacy source tree format involving
-``setup.py`` to be "version 0". We don't try to specify it further;
-its de facto specification is encoded in the source code and
-documentation of ``distutils``, ``setuptools``, ``pip``, and other
-tools.
+There is an existing, legacy source tree format involving
+``setup.py``. We don't try to specify it further; its de facto
+specification is encoded in the source code and documentation of
+``distutils``, ``setuptools``, ``pip``, and other tools. We'll refer
+to it as the ``setup.py``\-style.
 
-A "version 1" (or greater) source tree is any directory which contains
-a file named ``pypackage.json``. (If a tree contains both
-``pypackage.json`` and ``setup.py`` then it is a version 1+ source
-tree and the ``setup.py`` is ignored; this allows packages to include
-a ``setup.py`` for compatibility with old build frontends, while using
-the new system with new build frontends.)
+Here we define a new ``pypackage.json``\-style source tree. This
+consists of any any directory which contains a file named
+``pypackage.json``. (If a tree contains both ``pypackage.json`` and
+``setup.py`` then it is a ``pypackage.json``\-style source tree, and
+``pypackage.json``\-aware tools should ignore the ``setup.py``; this
+allows packages to include a ``setup.py`` for compatibility with old
+build frontends, while using the new system with new build frontends.)
 
 This file has the following schema. Extra keys are ignored.
 
@@ -233,6 +234,11 @@ difficult job, so we prefer not to do a half-way job here.)
 
 For the meaning and requirements of the ``metadata_directory``
 argument, see ``build_wheel`` above.
+
+[XX UNRESOLVED: it isn't entirely clear whether ``prefix`` alone is
+enough to support all needed configurations -- in particular,
+@takluyver has suggested that contra to the distutils docs, ``--user``
+on Windows is not expressible in terms of a regular prefix install.]
 
 Optional. If not defined, then this build backend does not support
 editable builds.
@@ -390,8 +396,8 @@ For now, we continue with the legacy sdist format which is mostly
 undefined, but basically comes down to: a file named
 ``{NAME}-{VERSION}.{EXT}``, which unpacks into a buildable source tree
 called ``{NAME}-{VERSION}/``. Traditionally these have always
-contained "version 0" source trees; we now allow them to also contain
-version 1+ source trees.
+contained ``setup.py``\-style source trees; we now allow them to also
+contain ``pypackage.json``\-style source trees.
 
 Integration frontends require that an sdist named
 ``{NAME}-{VERSION}.{EXT}`` will generate a wheel named
@@ -574,7 +580,7 @@ the new interface, then this should be sufficient for it to be used;
 in particular, it should *not* be necessary for every project that
 *uses* ``flit`` to update its individual ``pypackage.json`` file. (b)
 We do not want to have to spawn extra processes just to perform this
-negotation, because process spawns can easily become a bottleneck when
+negotiation, because process spawns can easily become a bottleneck when
 deploying large multi-package stacks on some platforms (Windows).
 
 In the interface described here, all of these goals are easy to
@@ -665,7 +671,7 @@ above, there are a few other differences in this proposal:
 A goal here is to make it as simple as possible to convert old-style
 sdists to new-style sdists. (E.g., this is one motivation for
 supporting dynamic build requirements.) The ideal would be that there
-would be a single static pypackage.cfg that could be dropped into any
+would be a single static pypackage.json that could be dropped into any
 "version 0" VCS checkout to convert it to the new shiny. This is
 probably not 100% possible, but we can get close, and it's important
 to keep track of how close we are... hence this section.
@@ -692,7 +698,7 @@ automatically upgrade packages to the new format:
    check whether they do this, and if so then when upgrading to the
    new system they will have to start explicitly declaring these
    dependencies (either via ``setup_requires=`` or via static
-   declaration in ``pypackage.cfg``).
+   declaration in ``pypackage.json``).
 
 2) There currently exist packages which do not declare consistent
    metadata (e.g. ``egg_info`` and ``bdist_wheel`` might get different
