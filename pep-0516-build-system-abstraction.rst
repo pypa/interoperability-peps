@@ -1,17 +1,15 @@
-:PEP: XX
-:Title: Build system abstraction for pip/conda etc
-:Version: $Revision$
-:Last-Modified: $Date$
-:Author: Robert Collins <rbtcollins@hp.com>,
-         Nathaniel Smith <njs@pobox.com>
-:BDFL-Delegate: Donald Stufft <donald@stufft.io>
-:Discussions-To: distutils-sig <distutils-sig@python.org>
-:Status: Draft
-:Type: Standards Track
-:Content-Type: text/x-rst
-:Created: 26-Oct-2015
-:Post-History: XX
-:Requires: PEP-0314 [#pep314], PEP-0508 [#pep508].
+PEP: 516
+Title: Build system abstraction for pip/conda etc
+Version: $Revision$
+Last-Modified: $Date$
+Author: Robert Collins <rbtcollins@hp.com>,
+        Nathaniel Smith <njs@pobox.com>
+BDFL-Delegate: Donald Stufft <donald@stufft.io>
+Discussions-To: distutils-sig <distutils-sig@python.org>
+Status: Draft
+Type: Standards Track
+Content-Type: text/x-rst
+Created: 26-Oct-2015
 
 
 Abstract
