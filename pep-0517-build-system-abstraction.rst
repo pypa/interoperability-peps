@@ -1,14 +1,16 @@
-PEP: ??
+PEP: 517
 Title: A build-system independent format for source trees
 Version: $Revision$
 Last-Modified: $Date$
 Author: Nathaniel J. Smith <njs@pobox.com>
+BDFL-Delegate: Nick Coghlan <ncoghlan@gmail.com>
+Discussions-To: <distutils-sig@python.org>
 Status: Draft
-Type: Standards-Track
+Type: Standards Track
 Content-Type: text/x-rst
 Created: 30-Sep-2015
 Post-History: 1 Oct 2015, 25 Oct 2015
-Discussions-To: <distutils-sig@python.org>
+
 
 ==========
  Abstract
@@ -712,3 +714,13 @@ automatically upgrade packages to the new format:
 ===========
 
 This document has been placed in the public domain.
+
+
+..
+   Local Variables:
+   mode: indented-text
+   indent-tabs-mode: nil
+   sentence-end-double-space: t
+   fill-column: 70
+   coding: utf-8
+   End:
